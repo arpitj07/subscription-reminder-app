@@ -32,6 +32,7 @@ class Subscription(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     category = db.Column(db.String(50), nullable=False)
+    person_name = db.Column(db.String(100), default='Self')  # Family member name
     start_date = db.Column(db.Date)  # Optional start date
     renewal_date = db.Column(db.Date, nullable=False)
     cost = db.Column(db.Float, default=0)
@@ -64,6 +65,7 @@ class Subscription(db.Model):
             'start_date': self.start_date.isoformat() if self.start_date else None,
             'renewal_date': self.renewal_date.isoformat(),
             'cost': self.cost,
+            'person_name': self.person_name,
             'subscription_type': self.subscription_type,
             'period_days': self.period_days,
             'is_recurring': self.is_recurring,
@@ -92,12 +94,16 @@ def index():
 def get_subscriptions():
     """Get all subscriptions with optional filtering"""
     category = request.args.get('category')
+    person = request.args.get('person')
     filter_type = request.args.get('filter')
 
-    query = Subscription.query
+    query = Subscription.query.filter_by(parent_subscription_id=None)  # Only root subscriptions
 
     if category and category != 'all':
         query = query.filter_by(category=category)
+
+    if person:
+        query = query.filter_by(person_name=person)
 
     subscriptions = query.all()
 
@@ -139,6 +145,7 @@ def create_subscription():
             period_days=period_days,
             is_recurring=data.get('is_recurring', True),
             parent_subscription_id=data.get('parent_subscription_id'),
+            person_name=data.get('person_name', 'Self'),
             reminder_days=data.get('reminder_days', 3),
             notes=data.get('notes', '')
         )
@@ -306,7 +313,11 @@ def import_data():
         db.session.rollback()
         return jsonify({'success': False, 'message': str(e)}), 400
 
-@app.errorhandler(404)
+@app.route('/api/people', methods=['GET'])
+def get_people():
+    """Get list of all family members"""
+    people = db.session.query(Subscription.person_name).distinct().all()
+    return jsonify([p[0] for p in people if p[0]])
 def not_found(error):
     return jsonify({'error': 'Not found'}), 404
 

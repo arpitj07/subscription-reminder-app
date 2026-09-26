@@ -807,6 +807,10 @@
             <button class="filter-chip" data-filter="OTT"><i class="fas fa-tv"></i>Entertainment</button>
             <button class="filter-chip" data-filter="Utility"><i class="fas fa-bolt"></i>Utilities</button>
             <button class="filter-chip" data-filter="LLM"><i class="fas fa-robot"></i>AI Services</button>
+            <div style="flex-grow: 1;"></div>
+            <select id="personFilter" class="form-input" style="max-width: 200px; margin: 0;">
+                <option value="">All People</option>
+            </select>
         </div>
 
         <div id="subscriptionsList" class="subscriptions-grid"></div>
@@ -820,6 +824,10 @@
                 <button class="close-btn" id="closeModal">&times;</button>
             </div>
             <form id="subscriptionForm">
+                <div class="form-group">
+                    <label class="form-label"><i class="fas fa-user"></i> Person/Family Member</label>
+                    <input type="text" id="personName" class="form-input" placeholder="e.g., Self, Mom, Dad, Kids" value="Self">
+                </div>
                 <div class="form-group">
                     <label class="form-label"><i class="fas fa-tag"></i> Name</label>
                     <input type="text" id="name" class="form-input" placeholder="e.g., Netflix Premium" required>
@@ -943,24 +951,47 @@
         let searchQuery = '';
 
         const subscriptionLogos = {
+            // Entertainment/OTT
             'Netflix': { emoji: 'N', bg: 'linear-gradient(135deg, #E50914, #B20710)', color: '#fff' },
             'Prime Video': { emoji: '▶', bg: 'linear-gradient(135deg, #00A8E1, #146EB4)', color: '#fff' },
-            'Disney+': { emoji: 'D+', bg: 'linear-gradient(135deg, #113CCF, #0F0A5C)', color: '#fff' },
+            'Disney+': { emoji: 'D', bg: 'linear-gradient(135deg, #113CCF, #0F0A5C)', color: '#fff' },
             'Jio Savn': { emoji: '♪', bg: 'linear-gradient(135deg, #1DB954, #1AA34A)', color: '#fff' },
             'Hotstar': { emoji: 'H', bg: 'linear-gradient(135deg, #0F1014, #1C1F28)', color: '#0F79F4' },
             'Sony Liv': { emoji: 'S', bg: 'linear-gradient(135deg, #000000, #1a1a1a)', color: '#fff' },
-            'ZEE5': { emoji: 'Z5', bg: 'linear-gradient(135deg, #6E3ADB, #8B5CF6)', color: '#fff' },
+            'ZEE5': { emoji: 'Z', bg: 'linear-gradient(135deg, #6E3ADB, #8B5CF6)', color: '#fff' },
             'YouTube Premium': { emoji: '▶', bg: 'linear-gradient(135deg, #FF0000, #CC0000)', color: '#fff' },
             'Voot': { emoji: 'V', bg: 'linear-gradient(135deg, #FF6B00, #FF8C00)', color: '#fff' },
+            'MX Player': { emoji: 'M', bg: 'linear-gradient(135deg, #171717, #424242)', color: '#E91E63' },
+            'Alt Balaji': { emoji: 'A', bg: 'linear-gradient(135deg, #FF5722, #FF6F00)', color: '#fff' },
+            'Apple TV+': { emoji: '📺', bg: 'linear-gradient(135deg, #000000, #111111)', color: '#A2845C' },
+            'HBO Max': { emoji: 'H', bg: 'linear-gradient(135deg, #000000, #1a1a1a)', color: '#6366F1' },
+
+            // AI Services
             'Claude Pro': { emoji: 'C', bg: 'linear-gradient(135deg, #6366F1, #8B5CF6)', color: '#fff' },
             'ChatGPT Plus': { emoji: 'G', bg: 'linear-gradient(135deg, #10A37F, #0D7D6D)', color: '#fff' },
             'Gemini Pro': { emoji: '✦', bg: 'linear-gradient(135deg, #4285F4, #EA4335)', color: '#fff' },
-            'Electricity Bill': { emoji: '⚡', bg: 'linear-gradient(135deg, #FFD700, #FFA500)', color: '#fff' },
+            'Copilot Pro': { emoji: 'C', bg: 'linear-gradient(135deg, #0078D4, #005A9E)', color: '#fff' },
+            'Midjourney': { emoji: 'M', bg: 'linear-gradient(135deg, #9D5BD2, #6D28D9)', color: '#fff' },
+
+            // Utilities & Services
+            'Electricity Bill': { emoji: '⚡', bg: 'linear-gradient(135deg, #FFD700, #FFA500)', color: '#000' },
             'Water Bill': { emoji: '💧', bg: 'linear-gradient(135deg, #00BFFF, #0099FF)', color: '#fff' },
             'Internet/Broadband': { emoji: '🌐', bg: 'linear-gradient(135deg, #5433FF, #20C997)', color: '#fff' },
             'Mobile Postpaid': { emoji: '📱', bg: 'linear-gradient(135deg, #667EEA, #764BA2)', color: '#fff' },
             'Mobile Prepaid': { emoji: '📱', bg: 'linear-gradient(135deg, #F093FB, #F5576C)', color: '#fff' },
-            'Gas Bill': { emoji: '🔥', bg: 'linear-gradient(135deg, #FF6B35, #FF4500)', color: '#fff' }
+            'Gas Bill': { emoji: '🔥', bg: 'linear-gradient(135deg, #FF6B35, #FF4500)', color: '#fff' },
+            'Car Insurance': { emoji: '🚗', bg: 'linear-gradient(135deg, #D72585, #A00853)', color: '#fff' },
+            'Health Insurance': { emoji: '⚕️', bg: 'linear-gradient(135deg, #00BFA5, #00897B)', color: '#fff' },
+            'Gym Membership': { emoji: '💪', bg: 'linear-gradient(135deg, #FF6B6B, #EE5A6F)', color: '#fff' },
+            'Cloud Storage': { emoji: '☁️', bg: 'linear-gradient(135deg, #4A90E2, #357ABD)', color: '#fff' },
+            'Domain Registration': { emoji: '🌍', bg: 'linear-gradient(135deg, #667BC6, #3B4B9E)', color: '#fff' },
+            'Web Hosting': { emoji: '🖥️', bg: 'linear-gradient(135deg, #2C3E50, #34495E)', color: '#fff' },
+
+            // Music & Reading
+            'Spotify': { emoji: '♫', bg: 'linear-gradient(135deg, #1DB954, #1aa34a)', color: '#fff' },
+            'Apple Music': { emoji: '♪', bg: 'linear-gradient(135deg, #FA243C, #B81D13)', color: '#fff' },
+            'Kindle Unlimited': { emoji: '📚', bg: 'linear-gradient(135deg, #FF9800, #F57C00)', color: '#fff' },
+            'Audible': { emoji: '🎧', bg: 'linear-gradient(135deg, #FF6B35, #C41E3A)', color: '#fff' },
         };
 
         function calculateMonthlyCost(subscription_type, period_days, cost, is_recurring) {
@@ -971,7 +1002,9 @@
 
         async function fetchSubscriptions(filter = 'all') {
             try {
-                const url = filter === 'all' ? `${API_BASE}/subscriptions` : `${API_BASE}/subscriptions?category=${filter}`;
+                const person = document.getElementById('personFilter')?.value;
+                let url = filter === 'all' ? `${API_BASE}/subscriptions` : `${API_BASE}/subscriptions?category=${filter}`;
+                if (person) url += (filter === 'all' ? '?' : '&') + `person=${encodeURIComponent(person)}`;
                 const response = await fetch(url);
                 if (!response.ok) throw new Error('Failed to fetch');
                 return await response.json();
@@ -979,6 +1012,33 @@
                 console.error('Error:', error);
                 showToast('Error loading subscriptions', 'error');
                 return [];
+            }
+        }
+
+        async function loadPeople() {
+            try {
+                const response = await fetch(`${API_BASE}/people`);
+                if (!response.ok) return [];
+                const people = await response.json();
+                const select = document.getElementById('personFilter');
+                const currentValue = select.value;
+
+                // Clear and rebuild options
+                const firstOption = select.querySelector('option:first-child');
+                select.innerHTML = '<option value="">All People</option>';
+
+                people.forEach(person => {
+                    if (person) {
+                        const option = document.createElement('option');
+                        option.value = person;
+                        option.textContent = person;
+                        select.appendChild(option);
+                    }
+                });
+
+                select.value = currentValue;
+            } catch (error) {
+                console.error('Error loading people:', error);
             }
         }
 
