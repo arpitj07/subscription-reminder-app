@@ -314,7 +314,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 28px;
+            font-size: 32px;
             flex-shrink: 0;
             overflow: hidden;
             position: relative;
@@ -325,6 +325,16 @@
             height: 100%;
             object-fit: cover;
             background: var(--bg-input);
+        }
+
+        .card-logo > div {
+            width: 100%;
+            height: 100%;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            font-size: 32px !important;
+            border-radius: inherit !important;
         }
 
         .subscription-card:hover .card-logo {
@@ -830,26 +840,26 @@
         let currentFilter = 'all';
         let searchQuery = '';
 
-        // Logos mapping with HIGH QUALITY CDN URLs
+        // Modern brand-colored logo system - using gradients and icons that always work
         const subscriptionLogos = {
-            'Netflix': 'https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg',
-            'Prime Video': 'https://upload.wikimedia.org/wikipedia/commons/1/18/Amazon_Prime_Video_logo.svg',
-            'Disney+': 'https://upload.wikimedia.org/wikipedia/en/1/1b/Disney_Plus_logo.svg',
-            'Jio Savn': 'https://upload.wikimedia.org/wikipedia/en/9/93/JioSaavn_Logo.png',
-            'Hotstar': 'https://upload.wikimedia.org/wikipedia/en/3/3c/Disney%2B_Hotstar_logo.svg',
-            'Sony Liv': 'https://upload.wikimedia.org/wikipedia/en/5/59/SonyLiv_logo.png',
-            'ZEE5': 'https://upload.wikimedia.org/wikipedia/en/4/44/ZEE5_Logo.png',
-            'YouTube Premium': 'https://upload.wikimedia.org/wikipedia/en/b/b8/YouTube_Logo_2017.svg',
-            'Voot': 'https://upload.wikimedia.org/wikipedia/en/2/21/Voot_logo.png',
-            'Claude Pro': 'https://cdn.openai.com/API/docs/images/model-cards/gpt-4-turbo.jpg',
-            'ChatGPT Plus': 'https://upload.wikimedia.org/wikipedia/commons/0/04/ChatGPT_logo.svg',
-            'Gemini Pro': 'https://upload.wikimedia.org/wikipedia/commons/e/e6/Google_Gemini_logo.png',
-            'Electricity Bill': '⚡',
-            'Water Bill': '💧',
-            'Internet/Broadband': '🌐',
-            'Mobile Postpaid': '📱',
-            'Mobile Prepaid': '📱',
-            'Gas Bill': '🔥'
+            'Netflix': { emoji: 'N', bg: 'linear-gradient(135deg, #E50914, #B20710)', color: '#fff' },
+            'Prime Video': { emoji: '▶', bg: 'linear-gradient(135deg, #00A8E1, #146EB4)', color: '#fff' },
+            'Disney+': { emoji: 'D+', bg: 'linear-gradient(135deg, #113CCF, #0F0A5C)', color: '#fff' },
+            'Jio Savn': { emoji: '♪', bg: 'linear-gradient(135deg, #1DB954, #1AA34A)', color: '#fff' },
+            'Hotstar': { emoji: 'H', bg: 'linear-gradient(135deg, #0F1014, #1C1F28)', color: '#0F79F4' },
+            'Sony Liv': { emoji: 'S', bg: 'linear-gradient(135deg, #000000, #1a1a1a)', color: '#fff' },
+            'ZEE5': { emoji: 'Z5', bg: 'linear-gradient(135deg, #6E3ADB, #8B5CF6)', color: '#fff' },
+            'YouTube Premium': { emoji: '▶', bg: 'linear-gradient(135deg, #FF0000, #CC0000)', color: '#fff' },
+            'Voot': { emoji: 'V', bg: 'linear-gradient(135deg, #FF6B00, #FF8C00)', color: '#fff' },
+            'Claude Pro': { emoji: 'C', bg: 'linear-gradient(135deg, #6366F1, #8B5CF6)', color: '#fff' },
+            'ChatGPT Plus': { emoji: 'G', bg: 'linear-gradient(135deg, #10A37F, #0D7D6D)', color: '#fff' },
+            'Gemini Pro': { emoji: '✦', bg: 'linear-gradient(135deg, #4285F4, #EA4335)', color: '#fff' },
+            'Electricity Bill': { emoji: '⚡', bg: 'linear-gradient(135deg, #FFD700, #FFA500)', color: '#fff' },
+            'Water Bill': { emoji: '💧', bg: 'linear-gradient(135deg, #00BFFF, #0099FF)', color: '#fff' },
+            'Internet/Broadband': { emoji: '🌐', bg: 'linear-gradient(135deg, #5433FF, #20C997)', color: '#fff' },
+            'Mobile Postpaid': { emoji: '📱', bg: 'linear-gradient(135deg, #667EEA, #764BA2)', color: '#fff' },
+            'Mobile Prepaid': { emoji: '📱', bg: 'linear-gradient(135deg, #F093FB, #F5576C)', color: '#fff' },
+            'Gas Bill': { emoji: '🔥', bg: 'linear-gradient(135deg, #FF6B35, #FF4500)', color: '#fff' }
         };
 
         async function fetchSubscriptions(filter = 'all') {
@@ -985,11 +995,15 @@
         }
 
         function renderLogoHtml(name) {
-            const logo = getLogoUrl(name);
-            if (logo.startsWith('http')) {
-                return `<img src="${logo}" alt="${name}" style="width:100%;height:100%;object-fit:contain;padding:4px;" onerror="this.parentElement.textContent='${name.charAt(0).toUpperCase()}';this.parentElement.style.fontSize='28px';">`;
+            const logo = subscriptionLogos[name];
+            if (!logo) return '📦';
+
+            if (typeof logo === 'string') {
+                return logo; // For emoji-only entries
             }
-            return logo || name.charAt(0).toUpperCase();
+
+            // For gradient entries
+            return `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:${logo.bg};font-size:32px;border-radius:inherit;">${logo.emoji}</div>`;
         }
 
         async function renderSubscriptions() {
