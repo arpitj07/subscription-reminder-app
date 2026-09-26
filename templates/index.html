@@ -26,6 +26,7 @@
             --warning: #f59e0b;
             --critical: #ef4444;
             --gradient-primary: linear-gradient(135deg, #6366f1, #8b5cf6);
+            --gradient-accent: linear-gradient(135deg, #ec4899, #6366f1);
             --shadow-lg: 0 16px 64px rgba(0,0,0,0.4);
             --blur: saturate(180%) blur(20px);
             --radius-xl: 20px;
@@ -111,6 +112,48 @@
             font-size: 14px;
             color: var(--text-muted);
             margin-top: 4px;
+        }
+
+        /* Enhanced Button Styles */
+        .btn-add {
+            padding: 12px 28px;
+            border: none;
+            background: var(--gradient-accent);
+            color: white;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 8px 20px rgba(236, 72, 153, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-add::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s;
+        }
+
+        .btn-add:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(236, 72, 153, 0.4);
+        }
+
+        .btn-add:hover::before {
+            transform: translateX(100%);
+        }
+
+        .btn-add:active {
+            transform: translateY(0);
         }
 
         .stats {
@@ -274,12 +317,14 @@
             font-size: 28px;
             flex-shrink: 0;
             overflow: hidden;
+            position: relative;
         }
 
         .card-logo img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            background: var(--bg-input);
         }
 
         .subscription-card:hover .card-logo {
@@ -390,35 +435,29 @@
             align-items: center;
             justify-content: center;
             gap: 6px;
+            font-size: 14px;
         }
 
-        .btn-primary {
-            background: var(--gradient-primary);
-            color: white;
+        .btn-edit {
+            background: rgba(99, 102, 241, 0.12);
+            color: #818cf8;
+            border: 1px solid rgba(99, 102, 241, 0.3);
         }
 
-        .btn-primary:hover {
-            transform: translateY(-2px);
+        .btn-edit:hover {
+            background: rgba(99, 102, 241, 0.2);
+            transform: translateY(-1px);
         }
 
-        .btn-secondary {
-            background: var(--bg-input);
-            color: var(--text-primary);
-            border: 1px solid var(--border);
-        }
-
-        .btn-secondary:hover {
-            background: var(--bg-card);
-        }
-
-        .btn-danger {
+        .btn-delete {
             background: rgba(239, 68, 68, 0.12);
             color: var(--critical);
             border: 1px solid rgba(239, 68, 68, 0.3);
         }
 
-        .btn-danger:hover {
+        .btn-delete:hover {
             background: rgba(239, 68, 68, 0.2);
+            transform: translateY(-1px);
         }
 
         .empty-state {
@@ -574,8 +613,34 @@
 
         .form-actions button {
             flex: 1;
-            padding: 16px;
+            padding: 14px;
             font-weight: 700;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 15px;
+        }
+
+        .btn-cancel {
+            background: var(--bg-input);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-cancel:hover {
+            background: var(--bg-card);
+        }
+
+        .btn-submit {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: 0 8px 20px var(--accent-glow);
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px var(--accent-glow);
         }
 
         .toast {
@@ -595,10 +660,16 @@
 
         .toast.show {
             display: flex;
+            animation: slideIn 0.4s ease;
         }
 
         .toast.success { background: linear-gradient(135deg, #10b981, #059669); }
         .toast.error { background: linear-gradient(135deg, #ef4444, #dc2626); }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
 
         @media (max-width: 768px) {
             .container { padding: 16px; }
@@ -624,7 +695,7 @@
                     <div class="header-subtitle">Track and optimize your recurring expenses</div>
                 </div>
             </div>
-            <button class="btn-primary" id="addBtn">
+            <button class="btn-add" id="addBtn">
                 <i class="fas fa-plus"></i>New Subscription
             </button>
         </header>
@@ -691,6 +762,7 @@
                             <option value="OTT">Hotstar</option>
                             <option value="OTT">Sony Liv</option>
                             <option value="OTT">ZEE5</option>
+                            <option value="OTT">YouTube Premium</option>
                             <option value="OTT">Voot</option>
                         </optgroup>
                         <optgroup label="🔌 Utilities & Recharge">
@@ -742,8 +814,8 @@
                     <textarea id="notes" class="form-input" placeholder="Add any notes..." rows="3"></textarea>
                 </div>
                 <div class="form-actions">
-                    <button type="button" class="btn-secondary" id="cancelBtn">Cancel</button>
-                    <button type="submit" class="btn-primary" id="submitBtn"><i class="fas fa-save"></i>Save</button>
+                    <button type="button" class="btn-cancel" id="cancelBtn">Cancel</button>
+                    <button type="submit" class="btn-submit" id="submitBtn"><i class="fas fa-save"></i>Save</button>
                 </div>
             </form>
         </div>
@@ -758,17 +830,18 @@
         let currentFilter = 'all';
         let searchQuery = '';
 
-        // Logos mapping with CDN URLs
+        // Logos mapping with HIGH QUALITY CDN URLs
         const subscriptionLogos = {
-            'Netflix': 'https://pngimg.com/uploads/netflix/netflix_PNG10.png',
-            'Prime Video': 'https://pngimg.com/uploads/amazon_prime/amazon_prime_PNG15.png',
-            'Disney+': 'https://pngimg.com/uploads/disney/disney_PNG20.png',
-            'Jio Savn': 'https://pngimg.com/uploads/youtube/youtube_PNG32.png',
-            'Hotstar': 'https://pngimg.com/uploads/youtube/youtube_PNG32.png',
-            'Sony Liv': 'https://pngimg.com/uploads/youtube/youtube_PNG32.png',
-            'ZEE5': 'https://pngimg.com/uploads/youtube/youtube_PNG32.png',
-            'Voot': 'https://pngimg.com/uploads/youtube/youtube_PNG32.png',
-            'Claude Pro': 'https://cdn-avatars.huggingface.co/v1/organizations/Anthropic/v1-bb46cd7f88d7f1b843ce640032e2f0e9f9f7ff7b/img.webp',
+            'Netflix': 'https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg',
+            'Prime Video': 'https://upload.wikimedia.org/wikipedia/commons/1/18/Amazon_Prime_Video_logo.svg',
+            'Disney+': 'https://upload.wikimedia.org/wikipedia/en/1/1b/Disney_Plus_logo.svg',
+            'Jio Savn': 'https://upload.wikimedia.org/wikipedia/en/9/93/JioSaavn_Logo.png',
+            'Hotstar': 'https://upload.wikimedia.org/wikipedia/en/3/3c/Disney%2B_Hotstar_logo.svg',
+            'Sony Liv': 'https://upload.wikimedia.org/wikipedia/en/5/59/SonyLiv_logo.png',
+            'ZEE5': 'https://upload.wikimedia.org/wikipedia/en/4/44/ZEE5_Logo.png',
+            'YouTube Premium': 'https://upload.wikimedia.org/wikipedia/en/b/b8/YouTube_Logo_2017.svg',
+            'Voot': 'https://upload.wikimedia.org/wikipedia/en/2/21/Voot_logo.png',
+            'Claude Pro': 'https://cdn.openai.com/API/docs/images/model-cards/gpt-4-turbo.jpg',
             'ChatGPT Plus': 'https://upload.wikimedia.org/wikipedia/commons/0/04/ChatGPT_logo.svg',
             'Gemini Pro': 'https://upload.wikimedia.org/wikipedia/commons/e/e6/Google_Gemini_logo.png',
             'Electricity Bill': '⚡',
@@ -864,21 +937,22 @@
             form.reset();
 
             if (id) {
-                // Get subscription and load data
-                subscriptions.forEach(async (sub) => {
-                    if (sub.id === id) {
-                        document.getElementById('modalTitle').innerHTML = '<i class="fas fa-edit"></i>Edit Subscription';
-                        document.getElementById('submitBtn').innerHTML = '<i class="fas fa-check"></i>Update';
-                        document.getElementById('name').value = sub.name || '';
-                        document.getElementById('category').value = sub.category || '';
-                        document.getElementById('startDate').value = (sub.start_date || '').split('T')[0];
-                        document.getElementById('renewalDate').value = (sub.renewal_date || '').split('T')[0];
-                        document.getElementById('subscriptionType').value = sub.subscription_type || 'Monthly';
-                        document.getElementById('cost').value = sub.cost || 0;
-                        document.getElementById('reminderDays').value = sub.reminder_days || 3;
-                        document.getElementById('notes').value = sub.notes || '';
-                    }
-                });
+                const sub = subscriptions.find(s => s.id === id);
+                if (!sub) {
+                    showToast('Subscription not found', 'error');
+                    return;
+                }
+
+                document.getElementById('modalTitle').innerHTML = '<i class="fas fa-edit"></i>Edit Subscription';
+                document.getElementById('submitBtn').innerHTML = '<i class="fas fa-check"></i>Update';
+                document.getElementById('name').value = sub.name || '';
+                document.getElementById('category').value = sub.category || '';
+                document.getElementById('startDate').value = (sub.start_date || '').split('T')[0];
+                document.getElementById('renewalDate').value = (sub.renewal_date || '').split('T')[0];
+                document.getElementById('subscriptionType').value = sub.subscription_type || 'Monthly';
+                document.getElementById('cost').value = sub.cost || 0;
+                document.getElementById('reminderDays').value = sub.reminder_days || 3;
+                document.getElementById('notes').value = sub.notes || '';
             } else {
                 document.getElementById('modalTitle').innerHTML = '<i class="fas fa-plus-circle"></i>Add Subscription';
                 document.getElementById('submitBtn').innerHTML = '<i class="fas fa-save"></i>Save';
@@ -907,20 +981,20 @@
         }
 
         function getLogoUrl(name) {
-            return subscriptionLogos[name] || '🎫';
+            return subscriptionLogos[name] || '';
         }
 
         function renderLogoHtml(name) {
             const logo = getLogoUrl(name);
             if (logo.startsWith('http')) {
-                return `<img src="${logo}" alt="${name}" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'">`;
+                return `<img src="${logo}" alt="${name}" style="width:100%;height:100%;object-fit:contain;padding:4px;" onerror="this.parentElement.textContent='${name.charAt(0).toUpperCase()}';this.parentElement.style.fontSize='28px';">`;
             }
-            return logo;
+            return logo || name.charAt(0).toUpperCase();
         }
 
         async function renderSubscriptions() {
             const subs = await fetchSubscriptions(currentFilter);
-            subscriptions = subs; // Store for edit functionality
+            subscriptions = subs;
             const container = document.getElementById('subscriptionsList');
 
             let filtered = subs;
@@ -981,10 +1055,10 @@
                             <div class="card-progress-bar" style="width: ${progress}%"></div>
                         </div>
                         <div class="card-actions">
-                            <button class="btn-secondary" onclick="openModal(${sub.id})">
+                            <button class="btn-edit" onclick="openModal(${sub.id})">
                                 <i class="fas fa-edit"></i>Edit
                             </button>
-                            <button class="btn-danger" onclick="deleteSubscription(${sub.id})">
+                            <button class="btn-delete" onclick="deleteSubscription(${sub.id})">
                                 <i class="fas fa-trash"></i>Delete
                             </button>
                         </div>
