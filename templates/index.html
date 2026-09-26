@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Subscription & Bill Reminder</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
     <style>
         :root {
             --color-bg: #ffffff;
@@ -12,21 +12,10 @@
             --color-border: #e5e7eb;
             --color-text: #1f2937;
             --color-text-secondary: #6b7280;
-            --color-text-tertiary: #9ca3af;
             --color-accent: #3b82f6;
-            --color-accent-light: #eff6ff;
             --color-success: #10b981;
             --color-warning: #f59e0b;
             --color-critical: #ef4444;
-            --color-success-light: #ecfdf5;
-            --color-warning-light: #fffbeb;
-            --color-critical-light: #fef2f2;
-            --radius-sm: 6px;
-            --radius-md: 8px;
-            --radius-lg: 12px;
-            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         }
 
         @media (prefers-color-scheme: dark) {
@@ -36,26 +25,7 @@
                 --color-border: #374151;
                 --color-text: #f3f4f6;
                 --color-text-secondary: #d1d5db;
-                --color-text-tertiary: #9ca3af;
-                --color-accent-light: #1e3a8a;
-                --color-success-light: #064e3b;
-                --color-warning-light: #78350f;
-                --color-critical-light: #7f1d1d;
             }
-        }
-
-        :root[data-theme="dark"] {
-            --color-bg: #111827;
-            --color-surface: #1f2937;
-            --color-border: #374151;
-            --color-text: #f3f4f6;
-            --color-text-secondary: #d1d5db;
-            --color-text-tertiary: #9ca3af;
-            --color-accent-light: #1e3a8a;
-            --color-success-light: #064e3b;
-            --color-warning-light: #78350f;
-            --color-critical-light: #7f1d1d;
-            color-scheme: dark;
         }
 
         * {
@@ -67,9 +37,9 @@
         body {
             background: var(--color-bg);
             color: var(--color-text);
-            line-height: 1.6;
-            font-size: 14px;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             padding: 16px;
+            line-height: 1.6;
         }
 
         .container {
@@ -89,14 +59,6 @@
         h1 {
             font-size: 28px;
             font-weight: 700;
-            color: var(--color-text);
-            margin: 0;
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
         }
 
         button {
@@ -104,12 +66,11 @@
             border: 1px solid var(--color-border);
             background: var(--color-surface);
             color: var(--color-text);
-            border-radius: var(--radius-md);
+            border-radius: 8px;
             font-size: 14px;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.2s;
-            font-family: inherit;
         }
 
         button:hover {
@@ -126,12 +87,6 @@
             background: #2563eb;
         }
 
-        button.danger {
-            background: var(--color-critical);
-            color: white;
-            border-color: var(--color-critical);
-        }
-
         .stats {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -142,7 +97,7 @@
         .stat-card {
             background: var(--color-surface);
             border: 1px solid var(--color-border);
-            border-radius: var(--radius-lg);
+            border-radius: 12px;
             padding: 16px;
             text-align: center;
         }
@@ -158,7 +113,6 @@
             font-size: 13px;
             color: var(--color-text-secondary);
             text-transform: uppercase;
-            letter-spacing: 0.5px;
             font-weight: 600;
         }
 
@@ -173,11 +127,10 @@
             padding: 6px 12px;
             border: 1px solid var(--color-border);
             background: var(--color-surface);
-            border-radius: var(--radius-md);
+            border-radius: 8px;
             cursor: pointer;
             font-size: 13px;
             font-weight: 500;
-            transition: all 0.2s;
         }
 
         .filter-btn.active {
@@ -186,95 +139,115 @@
             border-color: var(--color-accent);
         }
 
-        .dashboard {
+        .subscriptions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .subscription-card {
             background: var(--color-surface);
             border: 1px solid var(--color-border);
-            border-radius: var(--radius-lg);
-            overflow: hidden;
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
 
-        .table-wrapper {
-            overflow-x: auto;
+        .card-header {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-variant-numeric: tabular-nums;
-        }
-
-        thead {
+        .card-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
             background: var(--color-bg);
-            border-bottom: 1px solid var(--color-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            flex-shrink: 0;
         }
 
-        th {
-            padding: 12px 16px;
-            text-align: left;
+        .card-info h3 {
+            font-size: 16px;
             font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .card-type {
             font-size: 12px;
             color: var(--color-text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        td {
-            padding: 12px 16px;
-            border-bottom: 1px solid var(--color-border);
-            font-size: 14px;
-        }
-
-        tbody tr:hover {
             background: var(--color-bg);
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            width: fit-content;
+        }
+
+        .card-details {
+            display: grid;
+            gap: 8px;
+            font-size: 13px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .detail-label {
+            color: var(--color-text-secondary);
+        }
+
+        .detail-value {
+            font-weight: 600;
         }
 
         .status-badge {
             display: inline-block;
             padding: 4px 8px;
-            border-radius: var(--radius-sm);
+            border-radius: 6px;
             font-size: 12px;
             font-weight: 600;
+            width: fit-content;
         }
 
         .status-critical {
-            background: var(--color-critical-light);
-            color: var(--color-critical);
+            background: #fecaca;
+            color: #991b1b;
         }
 
         .status-warning {
-            background: var(--color-warning-light);
-            color: var(--color-warning);
+            background: #fef3c7;
+            color: #92400e;
         }
 
         .status-success {
-            background: var(--color-success-light);
-            color: var(--color-success);
+            background: #dcfce7;
+            color: #166534;
         }
 
-        .category-badge {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: var(--radius-sm);
-            font-size: 12px;
-            font-weight: 600;
-            background: var(--color-accent-light);
-            color: var(--color-accent);
-        }
-
-        .actions {
+        .card-actions {
             display: flex;
-            gap: 6px;
+            gap: 8px;
+            margin-top: 8px;
         }
 
         .btn-sm {
-            padding: 4px 8px;
+            flex: 1;
+            padding: 6px 8px;
             font-size: 12px;
             border: 1px solid var(--color-border);
             background: var(--color-bg);
             color: var(--color-text);
-            border-radius: var(--radius-sm);
+            border-radius: 6px;
             cursor: pointer;
-            transition: all 0.2s;
         }
 
         .btn-sm:hover {
@@ -299,13 +272,12 @@
         .modal-content {
             background: var(--color-surface);
             border: 1px solid var(--color-border);
-            border-radius: var(--radius-lg);
+            border-radius: 12px;
             padding: 24px;
             max-width: 500px;
             width: 100%;
             max-height: 90vh;
             overflow-y: auto;
-            box-shadow: var(--shadow-md);
         }
 
         .modal-header {
@@ -318,7 +290,6 @@
         .modal-header h2 {
             font-size: 20px;
             font-weight: 700;
-            margin: 0;
         }
 
         .close-btn {
@@ -328,6 +299,8 @@
             font-size: 24px;
             cursor: pointer;
             padding: 0;
+            width: 32px;
+            height: 32px;
         }
 
         .form-group {
@@ -339,7 +312,6 @@
             margin-bottom: 6px;
             font-weight: 600;
             font-size: 13px;
-            color: var(--color-text);
         }
 
         input,
@@ -348,7 +320,7 @@
             width: 100%;
             padding: 8px 12px;
             border: 1px solid var(--color-border);
-            border-radius: var(--radius-md);
+            border-radius: 8px;
             background: var(--color-bg);
             color: var(--color-text);
             font-family: inherit;
@@ -360,7 +332,7 @@
         textarea:focus {
             outline: none;
             border-color: var(--color-accent);
-            box-shadow: 0 0 0 3px var(--color-accent-light);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
 
         .form-actions {
@@ -376,7 +348,7 @@
         .alert {
             display: none;
             padding: 12px 16px;
-            border-radius: var(--radius-md);
+            border-radius: 8px;
             margin-bottom: 16px;
             font-size: 14px;
         }
@@ -386,15 +358,15 @@
         }
 
         .alert.success {
-            background: var(--color-success-light);
-            color: var(--color-success);
-            border: 1px solid var(--color-success);
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #86efac;
         }
 
         .alert.error {
-            background: var(--color-critical-light);
-            color: var(--color-critical);
-            border: 1px solid var(--color-critical);
+            background: #fecaca;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
         }
 
         .empty-state {
@@ -418,12 +390,8 @@
                 grid-template-columns: 1fr 1fr;
             }
 
-            table {
-                font-size: 13px;
-            }
-
-            th, td {
-                padding: 8px 12px;
+            .subscriptions-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -432,10 +400,7 @@
     <div class="container">
         <header>
             <h1>💰 Subscriptions & Bills</h1>
-            <div class="header-actions">
-                <button class="primary" id="addBtn">+ Add New</button>
-                <button id="exportBtn">📥 Export</button>
-            </div>
+            <button class="primary" id="addBtn">+ Add New</button>
         </header>
 
         <div class="alert" id="alert"></div>
@@ -461,37 +426,12 @@
 
         <div class="filters">
             <button class="filter-btn active" data-filter="all">All</button>
-            <button class="filter-btn" data-filter="OTT">OTT Platforms</button>
+            <button class="filter-btn" data-filter="OTT">OTT</button>
             <button class="filter-btn" data-filter="Utility">Utilities</button>
             <button class="filter-btn" data-filter="LLM">AI/LLM</button>
-            <button class="filter-btn" data-filter="critical">⚠️ Overdue</button>
         </div>
 
-        <div class="dashboard">
-            <div class="table-wrapper">
-                <table id="subscriptionTable">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Category</th>
-                            <th>Renewal Date</th>
-                            <th>Days Left</th>
-                            <th>Status</th>
-                            <th>Cost</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tableBody">
-                        <tr class="empty-state">
-                            <td colspan="7">
-                                <div class="empty-state-icon">📭</div>
-                                <p>No subscriptions added yet. Click "Add New" to get started!</p>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+        <div id="subscriptionsList" class="subscriptions-grid"></div>
     </div>
 
     <!-- Modal -->
@@ -537,6 +477,15 @@
                     </select>
                 </div>
                 <div class="form-group">
+                    <label for="subscriptionType">Subscription Type *</label>
+                    <select id="subscriptionType" required>
+                        <option value="Monthly">Monthly</option>
+                        <option value="Yearly">Yearly</option>
+                        <option value="Half-yearly">Half-yearly</option>
+                        <option value="Quarterly">Quarterly</option>
+                    </select>
+                </div>
+                <div class="form-group">
                     <label for="renewalDate">Renewal Date *</label>
                     <input type="date" id="renewalDate" required>
                 </div>
@@ -553,7 +502,7 @@
                     <textarea id="notes" placeholder="Add any notes..." rows="3"></textarea>
                 </div>
                 <div class="form-actions">
-                    <button type="button" class="primary" id="submitBtn">Add Subscription</button>
+                    <button type="submit" class="primary" id="submitBtn">Add Subscription</button>
                     <button type="button" id="cancelBtn">Cancel</button>
                 </div>
             </form>
@@ -562,10 +511,29 @@
 
     <script>
         const API_BASE = '/api';
+        let subscriptions = [];
         let currentEditId = null;
         let currentFilter = 'all';
 
-        // API Calls
+        // Subscription logos/emojis
+        const subscriptionLogos = {
+            'Netflix': '🎬',
+            'Prime Video': '🎥',
+            'Disney+': '✨',
+            'Jio Savn': '🎵',
+            'Hotstar': '📺',
+            'Sony Liv': '📽️',
+            'ZEE5': '🎞️',
+            'Voot': '📺',
+            'Claude Pro': '🤖',
+            'ChatGPT Plus': '💬',
+            'Electricity Bill': '⚡',
+            'Water Bill': '💧',
+            'Internet/Broadband': '🌐',
+            'Mobile Postpaid': '📱',
+            'Gas Bill': '🔥'
+        };
+
         async function fetchSubscriptions(filter = 'all') {
             try {
                 const url = filter === 'all' ? `${API_BASE}/subscriptions` : `${API_BASE}/subscriptions?filter=${filter}`;
@@ -597,11 +565,14 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
                 });
-                if (!response.ok) throw new Error('Failed to create');
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.message || 'Failed to create');
+                }
                 return await response.json();
             } catch (error) {
                 console.error('Error:', error);
-                showAlert('Error adding subscription', 'error');
+                showAlert('Error: ' + error.message, 'error');
                 return null;
             }
         }
@@ -623,7 +594,7 @@
         }
 
         async function deleteSubscription(id) {
-            if (!confirm('Are you sure?')) return;
+            if (!confirm('Are you sure you want to delete this subscription?')) return;
             try {
                 const response = await fetch(`${API_BASE}/subscriptions/${id}`, {
                     method: 'DELETE'
@@ -637,26 +608,6 @@
             }
         }
 
-        async function exportData() {
-            try {
-                const response = await fetch(`${API_BASE}/export`);
-                if (!response.ok) throw new Error('Failed to export');
-                const data = await response.json();
-                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `subscriptions-${new Date().toISOString().split('T')[0]}.json`;
-                a.click();
-                URL.revokeObjectURL(url);
-                showAlert('Data exported', 'success');
-            } catch (error) {
-                console.error('Error:', error);
-                showAlert('Error exporting data', 'error');
-            }
-        }
-
-        // UI Functions
         function showAlert(message, type = 'success') {
             const alert = document.getElementById('alert');
             alert.textContent = message;
@@ -678,40 +629,69 @@
             currentEditId = null;
         }
 
-        async function renderTable() {
+        function getStatusInfo(daysLeft) {
+            if (daysLeft < 0) {
+                return { class: 'status-critical', text: `${Math.abs(daysLeft)}d Overdue` };
+            } else if (daysLeft <= 3) {
+                return { class: 'status-warning', text: `${daysLeft}d Left` };
+            }
+            return { class: 'status-success', text: `${daysLeft}d Left` };
+        }
+
+        async function renderSubscriptions() {
             const subs = await fetchSubscriptions(currentFilter);
-            const tbody = document.getElementById('tableBody');
+            const container = document.getElementById('subscriptionsList');
 
             if (subs.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="7">
-                            <div class="empty-state">
-                                <div class="empty-state-icon">📭</div>
-                                <p>No subscriptions found</p>
-                            </div>
-                        </td>
-                    </tr>
+                container.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1/-1;">
+                        <div class="empty-state-icon">📭</div>
+                        <p>No subscriptions found. Click "Add New" to get started!</p>
+                    </div>
                 `;
                 return;
             }
 
-            tbody.innerHTML = subs.map(sub => `
-                <tr>
-                    <td><strong>${sub.name}</strong></td>
-                    <td><span class="category-badge">${sub.category}</span></td>
-                    <td>${new Date(sub.renewal_date).toLocaleDateString('en-IN')}</td>
-                    <td>${sub.days_left}</td>
-                    <td><span class="status-badge status-${sub.status}">${sub.days_left < 0 ? Math.abs(sub.days_left) + 'd Overdue' : sub.days_left + 'd Left'}</span></td>
-                    <td>₹${sub.cost.toFixed(2)}</td>
-                    <td>
-                        <div class="actions">
+            container.innerHTML = subs.map(sub => {
+                const daysLeft = sub.days_left;
+                const statusInfo = getStatusInfo(daysLeft);
+                const logo = subscriptionLogos[sub.name] || '🎫';
+                const renewalDate = new Date(sub.renewal_date).toLocaleDateString('en-IN');
+
+                return `
+                    <div class="subscription-card">
+                        <div class="card-header">
+                            <div class="card-image">${logo}</div>
+                            <div class="card-info">
+                                <h3>${sub.name}</h3>
+                                <span class="card-type">${sub.subscription_type}</span>
+                            </div>
+                        </div>
+                        <div class="card-details">
+                            <div class="detail-row">
+                                <span class="detail-label">Category:</span>
+                                <span class="detail-value">${sub.category}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Cost:</span>
+                                <span class="detail-value">₹${sub.cost.toFixed(2)}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Renewal:</span>
+                                <span class="detail-value">${renewalDate}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Status:</span>
+                                <span class="status-badge ${statusInfo.class}">${statusInfo.text}</span>
+                            </div>
+                        </div>
+                        <div class="card-actions">
                             <button class="btn-sm" onclick="openModal(${sub.id})">Edit</button>
                             <button class="btn-sm" onclick="deleteSubscription(${sub.id})">Delete</button>
                         </div>
-                    </td>
-                </tr>
-            `).join('');
+                    </div>
+                `;
+            }).join('');
         }
 
         async function updateStats() {
@@ -719,13 +699,13 @@
             if (stats) {
                 document.getElementById('totalSubscriptions').textContent = stats.total_subscriptions;
                 document.getElementById('dueSoon').textContent = stats.due_soon;
-                document.getElementById('monthlySpend').textContent = `₹${stats.monthly_spend}`;
+                document.getElementById('monthlySpend').textContent = `₹${stats.monthly_spend.toFixed(0)}`;
                 document.getElementById('overdueCount').textContent = stats.overdue;
             }
         }
 
         async function loadData() {
-            await renderTable();
+            await renderSubscriptions();
             await updateStats();
         }
 
@@ -733,14 +713,15 @@
         document.getElementById('addBtn').addEventListener('click', () => openModal());
         document.getElementById('closeModal').addEventListener('click', closeModal);
         document.getElementById('cancelBtn').addEventListener('click', closeModal);
-        document.getElementById('exportBtn').addEventListener('click', exportData);
 
         document.getElementById('subscriptionForm').addEventListener('submit', async (e) => {
             e.preventDefault();
+
             const data = {
                 name: document.getElementById('name').value,
                 category: document.getElementById('category').value,
                 renewal_date: document.getElementById('renewalDate').value,
+                subscription_type: document.getElementById('subscriptionType').value,
                 cost: parseFloat(document.getElementById('cost').value) || 0,
                 reminder_days: parseInt(document.getElementById('reminderDays').value) || 3,
                 notes: document.getElementById('notes').value
@@ -748,10 +729,10 @@
 
             if (currentEditId) {
                 const result = await updateSubscription(currentEditId, data);
-                if (result?.success) showAlert('Updated', 'success');
+                if (result?.success) showAlert('Updated successfully', 'success');
             } else {
                 const result = await createSubscription(data);
-                if (result?.success) showAlert('Added', 'success');
+                if (result?.success) showAlert('Added successfully', 'success');
             }
 
             closeModal();
@@ -763,7 +744,7 @@
                 document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
                 e.target.classList.add('active');
                 currentFilter = e.target.dataset.filter;
-                renderTable();
+                renderSubscriptions();
             });
         });
 
@@ -773,7 +754,7 @@
 
         // Initial load
         loadData();
-        setInterval(loadData, 30000); // Refresh every 30 seconds
+        setInterval(loadData, 30000);
     </script>
 </body>
 </html>

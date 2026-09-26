@@ -34,6 +34,7 @@ class Subscription(db.Model):
     category = db.Column(db.String(50), nullable=False)
     renewal_date = db.Column(db.Date, nullable=False)
     cost = db.Column(db.Float, default=0)
+    subscription_type = db.Column(db.String(20), default='Monthly')  # Monthly, Yearly, Half-yearly
     reminder_days = db.Column(db.Integer, default=3)
     notes = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -96,6 +97,7 @@ def create_subscription():
             category=data['category'],
             renewal_date=datetime.fromisoformat(data['renewal_date']).date(),
             cost=data.get('cost', 0),
+            subscription_type=data.get('subscription_type', 'Monthly'),
             reminder_days=data.get('reminder_days', 3),
             notes=data.get('notes', '')
         )
@@ -137,6 +139,8 @@ def update_subscription(id):
             subscription.renewal_date = datetime.fromisoformat(data['renewal_date']).date()
         if 'cost' in data:
             subscription.cost = data['cost']
+        if 'subscription_type' in data:
+            subscription.subscription_type = data['subscription_type']
         if 'reminder_days' in data:
             subscription.reminder_days = data['reminder_days']
         if 'notes' in data:
