@@ -32,9 +32,10 @@ class Subscription(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     category = db.Column(db.String(50), nullable=False)
+    start_date = db.Column(db.Date)  # Optional start date
     renewal_date = db.Column(db.Date, nullable=False)
     cost = db.Column(db.Float, default=0)
-    subscription_type = db.Column(db.String(20), default='Monthly')  # Monthly, Yearly, Half-yearly
+    subscription_type = db.Column(db.String(20), default='Monthly')  # Monthly, Yearly, Half-yearly, Quarterly
     reminder_days = db.Column(db.Integer, default=3)
     notes = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -48,8 +49,10 @@ class Subscription(db.Model):
             'id': self.id,
             'name': self.name,
             'category': self.category,
+            'start_date': self.start_date.isoformat() if self.start_date else None,
             'renewal_date': self.renewal_date.isoformat(),
             'cost': self.cost,
+            'subscription_type': self.subscription_type,
             'reminder_days': self.reminder_days,
             'notes': self.notes,
             'days_left': days_left,
@@ -92,9 +95,14 @@ def create_subscription():
     data = request.json
 
     try:
+        start_date = None
+        if data.get('start_date'):
+            start_date = datetime.fromisoformat(data['start_date']).date()
+
         subscription = Subscription(
             name=data['name'],
             category=data['category'],
+            start_date=start_date,
             renewal_date=datetime.fromisoformat(data['renewal_date']).date(),
             cost=data.get('cost', 0),
             subscription_type=data.get('subscription_type', 'Monthly'),
@@ -135,6 +143,8 @@ def update_subscription(id):
             subscription.name = data['name']
         if 'category' in data:
             subscription.category = data['category']
+        if 'start_date' in data:
+            subscription.start_date = datetime.fromisoformat(data['start_date']).date() if data['start_date'] else None
         if 'renewal_date' in data:
             subscription.renewal_date = datetime.fromisoformat(data['renewal_date']).date()
         if 'cost' in data:
@@ -208,11 +218,17 @@ def import_data():
             return jsonify({'error': 'Data must be a list'}), 400
 
         for item in data:
+            start_date = None
+            if item.get('start_date'):
+                start_date = datetime.fromisoformat(item['start_date']).date()
+
             subscription = Subscription(
                 name=item['name'],
                 category=item['category'],
+                start_date=start_date,
                 renewal_date=datetime.fromisoformat(item['renewal_date']).date(),
                 cost=item.get('cost', 0),
+                subscription_type=item.get('subscription_type', 'Monthly'),
                 reminder_days=item.get('reminder_days', 3),
                 notes=item.get('notes', '')
             )
