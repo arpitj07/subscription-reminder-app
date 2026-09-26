@@ -35,15 +35,27 @@ class Subscription(db.Model):
     start_date = db.Column(db.Date)  # Optional start date
     renewal_date = db.Column(db.Date, nullable=False)
     cost = db.Column(db.Float, default=0)
-    subscription_type = db.Column(db.String(20), default='Monthly')  # Monthly, Yearly, Half-yearly, Quarterly
+    subscription_type = db.Column(db.String(20), default='Monthly')  # Monthly, Yearly, Half-yearly, Quarterly, Custom
+    period_days = db.Column(db.Integer, default=30)  # Period in days (30, 84, 330, etc.)
+    is_recurring = db.Column(db.Boolean, default=True)  # True=recurring, False=one-time
+    parent_subscription_id = db.Column(db.Integer, db.ForeignKey('subscription.id'), nullable=True)  # For add-ons
     reminder_days = db.Column(db.Integer, default=3)
     notes = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
-    def to_dict(self):
+    def to_dict(self, include_addons=True):
         days_left = (self.renewal_date - datetime.now().date()).days
         status = 'critical' if days_left < 0 else 'warning' if days_left <= 3 else 'success'
+
+        # Calculate monthly equivalent cost
+        monthly_cost = calculate_monthly_cost(self)
+
+        # Get add-ons if this is a parent subscription
+        addons = []
+        if include_addons and self.parent_subscription_id is None:
+            child_subs = Subscription.query.filter_by(parent_subscription_id=self.id).all()
+            addons = [{'id': c.id, 'name': c.name, 'category': c.category} for c in child_subs]
 
         return {
             'id': self.id,
@@ -53,6 +65,11 @@ class Subscription(db.Model):
             'renewal_date': self.renewal_date.isoformat(),
             'cost': self.cost,
             'subscription_type': self.subscription_type,
+            'period_days': self.period_days,
+            'is_recurring': self.is_recurring,
+            'monthly_cost': round(monthly_cost, 2),
+            'parent_subscription_id': self.parent_subscription_id,
+            'addons': addons,
             'reminder_days': self.reminder_days,
             'notes': self.notes,
             'days_left': days_left,
@@ -99,13 +116,29 @@ def create_subscription():
         if data.get('start_date'):
             start_date = datetime.fromisoformat(data['start_date']).date()
 
+        # Calculate period_days based on subscription_type
+        sub_type = data.get('subscription_type', 'Monthly')
+        if sub_type == 'Custom':
+            period_days = data.get('period_days', 30)
+        elif sub_type == 'Yearly':
+            period_days = 365
+        elif sub_type == 'Half-yearly':
+            period_days = 180
+        elif sub_type == 'Quarterly':
+            period_days = 90
+        else:  # Monthly
+            period_days = 30
+
         subscription = Subscription(
             name=data['name'],
             category=data['category'],
             start_date=start_date,
             renewal_date=datetime.fromisoformat(data['renewal_date']).date(),
             cost=data.get('cost', 0),
-            subscription_type=data.get('subscription_type', 'Monthly'),
+            subscription_type=sub_type,
+            period_days=period_days,
+            is_recurring=data.get('is_recurring', True),
+            parent_subscription_id=data.get('parent_subscription_id'),
             reminder_days=data.get('reminder_days', 3),
             notes=data.get('notes', '')
         )
@@ -151,6 +184,23 @@ def update_subscription(id):
             subscription.cost = data['cost']
         if 'subscription_type' in data:
             subscription.subscription_type = data['subscription_type']
+            # Auto-calculate period_days based on type
+            if data['subscription_type'] == 'Custom':
+                subscription.period_days = data.get('period_days', 30)
+            elif data['subscription_type'] == 'Yearly':
+                subscription.period_days = 365
+            elif data['subscription_type'] == 'Half-yearly':
+                subscription.period_days = 180
+            elif data['subscription_type'] == 'Quarterly':
+                subscription.period_days = 90
+            else:  # Monthly
+                subscription.period_days = 30
+        if 'period_days' in data:
+            subscription.period_days = data['period_days']
+        if 'is_recurring' in data:
+            subscription.is_recurring = data['is_recurring']
+        if 'parent_subscription_id' in data:
+            subscription.parent_subscription_id = data['parent_subscription_id']
         if 'reminder_days' in data:
             subscription.reminder_days = data['reminder_days']
         if 'notes' in data:
@@ -183,21 +233,33 @@ def delete_subscription(id):
         db.session.rollback()
         return jsonify({'success': False, 'message': str(e)}), 400
 
+def calculate_monthly_cost(subscription):
+    """Calculate monthly equivalent cost based on period and recurrence"""
+    if not subscription.is_recurring:
+        return 0  # One-time payments don't contribute to monthly spend
+
+    cost = subscription.cost or 0
+    period_days = subscription.period_days or 30
+
+    # Convert to monthly cost (30-day month)
+    monthly_cost = (cost / period_days) * 30
+    return monthly_cost
+
 @app.route('/api/stats', methods=['GET'])
 def get_stats():
     """Get dashboard statistics"""
-    subscriptions = Subscription.query.all()
+    subscriptions = Subscription.query.filter_by(parent_subscription_id=None).all()  # Only root subscriptions
     today = datetime.now().date()
 
     total = len(subscriptions)
     due_soon = len([s for s in subscriptions if 0 <= (s.renewal_date - today).days <= 7])
-    monthly_spend = sum(s.cost for s in subscriptions)
+    monthly_spend = sum(calculate_monthly_cost(s) for s in subscriptions)
     overdue = len([s for s in subscriptions if (s.renewal_date - today).days < 0])
 
     return jsonify({
         'total_subscriptions': total,
         'due_soon': due_soon,
-        'monthly_spend': monthly_spend,
+        'monthly_spend': round(monthly_spend, 2),
         'overdue': overdue
     })
 

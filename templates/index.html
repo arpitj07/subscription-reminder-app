@@ -114,7 +114,6 @@
             margin-top: 4px;
         }
 
-        /* Enhanced Button Styles */
         .btn-add {
             padding: 12px 28px;
             border: none;
@@ -150,10 +149,6 @@
 
         .btn-add:hover::before {
             transform: translateX(100%);
-        }
-
-        .btn-add:active {
-            transform: translateY(0);
         }
 
         .stats {
@@ -320,13 +315,6 @@
             position: relative;
         }
 
-        .card-logo img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            background: var(--bg-input);
-        }
-
         .card-logo > div {
             width: 100%;
             height: 100%;
@@ -363,6 +351,7 @@
             font-weight: 600;
             text-transform: uppercase;
             margin-right: 8px;
+            margin-bottom: 4px;
         }
 
         .card-badge.type {
@@ -383,6 +372,12 @@
         .card-badge.status-success {
             background: rgba(16, 185, 129, 0.12);
             color: var(--success);
+        }
+
+        .card-badge.payment-type {
+            background: rgba(168, 85, 247, 0.12);
+            color: #d8b4fe;
+            text-transform: capitalize;
         }
 
         .card-details {
@@ -408,6 +403,35 @@
         .detail-value {
             font-weight: 600;
             color: var(--text-primary);
+        }
+
+        .addons-section {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+
+        .addons-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .addon-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 50px;
+            background: rgba(16, 185, 129, 0.12);
+            color: #86efac;
+            font-size: 12px;
+            font-weight: 600;
+            margin-right: 8px;
+            margin-bottom: 4px;
         }
 
         .card-progress-container {
@@ -615,6 +639,45 @@
             gap: 20px;
         }
 
+        .payment-type-group {
+            display: flex;
+            gap: 12px;
+        }
+
+        .payment-type-group label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            flex: 1;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--bg-input);
+            transition: var(--transition);
+        }
+
+        .payment-type-group label:hover {
+            background: var(--bg-card);
+            border-color: var(--accent);
+        }
+
+        .payment-type-group input[type="radio"] {
+            cursor: pointer;
+        }
+
+        .payment-type-group input[type="radio"]:checked + span {
+            color: var(--accent);
+        }
+
+        .period-info {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 6px;
+            display: block;
+        }
+
         .form-actions {
             display: flex;
             gap: 16px;
@@ -688,6 +751,7 @@
             .subscriptions-grid { grid-template-columns: 1fr; }
             .form-row { grid-template-columns: 1fr; }
             header { flex-direction: column; align-items: flex-start; }
+            .payment-type-group { flex-direction: column; }
         }
 
         ::-webkit-scrollbar { width: 8px; }
@@ -724,7 +788,7 @@
             <div class="stat-card">
                 <div class="stat-icon yellow"><i class="fas fa-dollar-sign"></i></div>
                 <div class="stat-value" id="monthlySpend">₹0</div>
-                <div class="stat-label">Monthly Spend</div>
+                <div class="stat-label">Monthly Spend (Recurring)</div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon red"><i class="fas fa-exclamation-triangle"></i></div>
@@ -800,20 +864,58 @@
                         <input type="date" id="renewalDate" class="form-input" required>
                     </div>
                 </div>
+                <div class="form-group">
+                    <label class="form-label"><i class="fas fa-toggle-on"></i> Payment Type</label>
+                    <div class="payment-type-group">
+                        <label>
+                            <input type="radio" name="paymentType" value="recurring" checked>
+                            <span>Recurring</span>
+                        </label>
+                        <label>
+                            <input type="radio" name="paymentType" value="oneTime">
+                            <span>One-time</span>
+                        </label>
+                    </div>
+                </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label"><i class="fas fa-clock"></i> Type</label>
+                        <label class="form-label"><i class="fas fa-clock"></i> Period</label>
                         <select id="subscriptionType" class="form-input">
                             <option value="Monthly">Monthly</option>
                             <option value="Yearly">Yearly</option>
                             <option value="Half-yearly">Half-yearly</option>
                             <option value="Quarterly">Quarterly</option>
+                            <option value="Custom">Custom Days</option>
                         </select>
+                        <small class="period-info">Auto-calculates monthly equivalent</small>
                     </div>
+                    <div class="form-group" id="customPeriodGroup" style="display: none;">
+                        <label class="form-label"><i class="fas fa-calendar-days"></i> Days</label>
+                        <input type="number" id="periodDays" class="form-input" placeholder="e.g., 84" min="1" max="3650">
+                        <small class="period-info">Billing cycle duration in days</small>
+                    </div>
+                </div>
+                <div class="form-row">
                     <div class="form-group">
                         <label class="form-label"><i class="fas fa-indian-rupee-sign"></i> Cost (₹)</label>
-                        <input type="number" id="cost" class="form-input" step="0.01" min="0" placeholder="0.00">
+                        <input type="number" id="cost" class="form-input" step="0.01" min="0" placeholder="0.00" required>
                     </div>
+                    <div class="form-group">
+                        <label class="form-label"><i class="fas fa-percent"></i> Monthly Equiv.</label>
+                        <input type="text" id="monthlyCost" class="form-input" disabled placeholder="₹0.00" style="background: var(--bg-input); opacity: 0.7;">
+                        <small class="period-info">Calculated value (one-time = ₹0)</small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label"><i class="fas fa-link"></i> Link as Add-on</label>
+                    <select id="parentSubscription" class="form-input">
+                        <option value="">None (Main subscription)</option>
+                    </select>
+                    <small class="period-info">Link OTT services to other subscriptions (e.g., Netflix with WiFi)</small>
+                </div>
+                <div class="form-group" id="addonsSection" style="display: none;">
+                    <label class="form-label"><i class="fas fa-gift"></i> Linked Add-ons</label>
+                    <div id="linkedAddons" style="display: flex; flex-direction: column; gap: 8px;"></div>
                 </div>
                 <div class="form-group">
                     <label class="form-label"><i class="fas fa-bell"></i> Reminder Days</label>
@@ -840,7 +942,6 @@
         let currentFilter = 'all';
         let searchQuery = '';
 
-        // Modern brand-colored logo system - using gradients and icons that always work
         const subscriptionLogos = {
             'Netflix': { emoji: 'N', bg: 'linear-gradient(135deg, #E50914, #B20710)', color: '#fff' },
             'Prime Video': { emoji: '▶', bg: 'linear-gradient(135deg, #00A8E1, #146EB4)', color: '#fff' },
@@ -861,6 +962,12 @@
             'Mobile Prepaid': { emoji: '📱', bg: 'linear-gradient(135deg, #F093FB, #F5576C)', color: '#fff' },
             'Gas Bill': { emoji: '🔥', bg: 'linear-gradient(135deg, #FF6B35, #FF4500)', color: '#fff' }
         };
+
+        function calculateMonthlyCost(subscription_type, period_days, cost, is_recurring) {
+            if (!is_recurring) return 0;
+            const days = period_days || 30;
+            return (cost / days) * 30;
+        }
 
         async function fetchSubscriptions(filter = 'all') {
             try {
@@ -945,6 +1052,7 @@
             currentEditId = id;
             const form = document.getElementById('subscriptionForm');
             form.reset();
+            document.getElementById('customPeriodGroup').style.display = 'none';
 
             if (id) {
                 const sub = subscriptions.find(s => s.id === id);
@@ -960,16 +1068,81 @@
                 document.getElementById('startDate').value = (sub.start_date || '').split('T')[0];
                 document.getElementById('renewalDate').value = (sub.renewal_date || '').split('T')[0];
                 document.getElementById('subscriptionType').value = sub.subscription_type || 'Monthly';
+                document.getElementById('periodDays').value = sub.period_days || 30;
                 document.getElementById('cost').value = sub.cost || 0;
+                document.getElementById('monthlyCost').value = `₹${(sub.monthly_cost || 0).toFixed(2)}`;
                 document.getElementById('reminderDays').value = sub.reminder_days || 3;
                 document.getElementById('notes').value = sub.notes || '';
+
+                const paymentTypeRadios = document.getElementsByName('paymentType');
+                paymentTypeRadios.forEach(r => r.checked = r.value === (sub.is_recurring ? 'recurring' : 'oneTime'));
+
+                if (sub.subscription_type === 'Custom') {
+                    document.getElementById('customPeriodGroup').style.display = 'block';
+                }
+
+                // Update parent subscription dropdown
+                populateParentSubscriptions(id);
+                document.getElementById('parentSubscription').value = sub.parent_subscription_id || '';
+
+                if (sub.parent_subscription_id === null) {
+                    document.getElementById('addonsSection').style.display = 'block';
+                    renderAddons(sub);
+                } else {
+                    document.getElementById('addonsSection').style.display = 'none';
+                }
             } else {
                 document.getElementById('modalTitle').innerHTML = '<i class="fas fa-plus-circle"></i>Add Subscription';
                 document.getElementById('submitBtn').innerHTML = '<i class="fas fa-save"></i>Save';
+                document.getElementById('monthlyCost').value = '₹0.00';
+                populateParentSubscriptions();
+                document.getElementById('addonsSection').style.display = 'none';
             }
 
             document.getElementById('modal').classList.add('show');
             document.body.style.overflow = 'hidden';
+        }
+
+        function populateParentSubscriptions(excludeId = null) {
+            const select = document.getElementById('parentSubscription');
+            const currentValue = select.value;
+            select.innerHTML = '<option value="">None (Main subscription)</option>';
+
+            subscriptions
+                .filter(s => s.parent_subscription_id === null && s.id !== excludeId)
+                .forEach(sub => {
+                    const option = document.createElement('option');
+                    option.value = sub.id;
+                    option.textContent = `${sub.name} (${sub.category})`;
+                    select.appendChild(option);
+                });
+
+            select.value = currentValue;
+        }
+
+        function renderAddons(subscription) {
+            const container = document.getElementById('linkedAddons');
+            if (!subscription.addons || subscription.addons.length === 0) {
+                container.innerHTML = '<small style="color: var(--text-muted);">No add-ons linked yet</small>';
+                return;
+            }
+
+            container.innerHTML = subscription.addons
+                .map(addon => `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; background: rgba(16, 185, 129, 0.1); border-radius: 8px;">
+                        <span>${addon.name}</span>
+                        <button type="button" class="btn-remove-addon" data-addon-id="${addon.id}" style="background: none; border: none; color: var(--critical); cursor: pointer; padding: 4px 8px;"><i class="fas fa-minus"></i></button>
+                    </div>
+                `)
+                .join('');
+
+            container.querySelectorAll('.btn-remove-addon').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const addonId = btn.dataset.addonId;
+                    deleteSubscription(addonId);
+                });
+            });
         }
 
         function closeModal() {
@@ -990,19 +1163,9 @@
             return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
         }
 
-        function getLogoUrl(name) {
-            return subscriptionLogos[name] || '';
-        }
-
         function renderLogoHtml(name) {
             const logo = subscriptionLogos[name];
             if (!logo) return '📦';
-
-            if (typeof logo === 'string') {
-                return logo; // For emoji-only entries
-            }
-
-            // For gradient entries
             return `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:${logo.bg};font-size:32px;border-radius:inherit;">${logo.emoji}</div>`;
         }
 
@@ -1036,6 +1199,18 @@
                 const startDate = formatDate(sub.start_date);
                 const totalDays = sub.renewal_date && sub.start_date ? Math.max(1, Math.ceil((new Date(sub.renewal_date) - new Date(sub.start_date)) / (1000 * 60 * 60 * 24))) : 0;
                 const progress = totalDays > 0 ? Math.round(((totalDays - daysLeft) / totalDays) * 100) : 0;
+                const paymentTypeLabel = sub.is_recurring ? 'Recurring' : 'One-time';
+                const monthlyCostDisplay = sub.is_recurring ? `₹${(sub.monthly_cost || 0).toFixed(2)}/mo` : 'N/A';
+
+                let addonsHtml = '';
+                if (sub.addons && sub.addons.length > 0) {
+                    addonsHtml = `
+                        <div class="addons-section">
+                            <span class="addons-label"><i class="fas fa-gift"></i> Linked Add-ons</span>
+                            ${sub.addons.map(addon => `<span class="addon-item"><i class="fas fa-check"></i> ${addon.name}</span>`).join('')}
+                        </div>
+                    `;
+                }
 
                 return `
                     <div class="subscription-card">
@@ -1044,7 +1219,8 @@
                             <div class="card-info">
                                 <div class="card-name">${sub.name}</div>
                                 <span class="card-badge type">${sub.subscription_type}</span>
-                                <span class="card-badge ${statusInfo.class}">${statusInfo.text}</span>
+                                <span class="card-badge status-${statusInfo.class}">${statusInfo.text}</span>
+                                <span class="card-badge payment-type">${paymentTypeLabel}</span>
                             </div>
                         </div>
                         <div class="card-details">
@@ -1061,10 +1237,11 @@
                                 <span class="detail-value">₹${(sub.cost || 0).toFixed(2)}</span>
                             </div>
                             <div class="detail-row">
-                                <span class="detail-label"><i class="fas fa-history"></i> Duration</span>
-                                <span class="detail-value">${totalDays > 0 ? totalDays + ' days' : 'N/A'}</span>
+                                <span class="detail-label"><i class="fas fa-chart-line"></i> Monthly Equiv.</span>
+                                <span class="detail-value">${monthlyCostDisplay}</span>
                             </div>
                         </div>
+                        ${addonsHtml}
                         <div class="card-progress-container">
                             <div class="card-progress-bar" style="width: ${progress}%"></div>
                         </div>
@@ -1106,6 +1283,44 @@
             renderSubscriptions();
         });
 
+        document.getElementById('subscriptionType').addEventListener('change', (e) => {
+            document.getElementById('customPeriodGroup').style.display = e.target.value === 'Custom' ? 'block' : 'none';
+        });
+
+        // Update monthly cost when inputs change
+        ['cost', 'periodDays', 'subscriptionType'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.addEventListener('input', () => {
+                    const cost = parseFloat(document.getElementById('cost').value) || 0;
+                    const type = document.getElementById('subscriptionType').value;
+                    let periodDays = 30;
+
+                    if (type === 'Custom') {
+                        periodDays = parseInt(document.getElementById('periodDays').value) || 30;
+                    } else if (type === 'Yearly') {
+                        periodDays = 365;
+                    } else if (type === 'Half-yearly') {
+                        periodDays = 180;
+                    } else if (type === 'Quarterly') {
+                        periodDays = 90;
+                    }
+
+                    const isRecurring = document.querySelector('input[name="paymentType"]:checked').value === 'recurring';
+                    const monthlyCost = calculateMonthlyCost(type, periodDays, cost, isRecurring);
+                    document.getElementById('monthlyCost').value = `₹${monthlyCost.toFixed(2)}`;
+                });
+            }
+        });
+
+        document.querySelector('input[name="paymentType"][value="recurring"]').addEventListener('change', () => {
+            document.getElementById('cost').dispatchEvent(new Event('input'));
+        });
+
+        document.querySelector('input[name="paymentType"][value="oneTime"]').addEventListener('change', () => {
+            document.getElementById('cost').dispatchEvent(new Event('input'));
+        });
+
         document.getElementById('subscriptionForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
@@ -1115,12 +1330,16 @@
                 start_date: document.getElementById('startDate').value || null,
                 renewal_date: document.getElementById('renewalDate').value,
                 subscription_type: document.getElementById('subscriptionType').value,
+                period_days: parseInt(document.getElementById('periodDays').value) || 30,
                 cost: parseFloat(document.getElementById('cost').value) || 0,
+                is_recurring: document.querySelector('input[name="paymentType"]:checked').value === 'recurring',
+                parent_subscription_id: document.getElementById('parentSubscription').value || null,
                 reminder_days: parseInt(document.getElementById('reminderDays').value) || 3,
                 notes: document.getElementById('notes').value
             };
 
             if (!data.start_date) delete data.start_date;
+            if (!data.parent_subscription_id) data.parent_subscription_id = null;
 
             if (currentEditId) {
                 const result = await updateSubscription(currentEditId, data);
