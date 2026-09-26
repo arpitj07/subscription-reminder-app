@@ -3,72 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Subscription & Bill Reminder</title>
+    <title>Subscription Manager Pro</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         :root {
-            --bg-primary: #0a0a0f;
-            --bg-secondary: #12121a;
-            --bg-card: #1a1a2e;
-            --bg-card-hover: #22223a;
-            --bg-input: #16162a;
-            --border: #2a2a40;
-            --border-focus: #6366f1;
-            --text-primary: #e8e8f0;
-            --text-secondary: #8888a8;
-            --text-muted: #555570;
+            --bg-primary: #000000;
+            --bg-secondary: #0a0a0f;
+            --bg-tertiary: #11111a;
+            --bg-card: rgba(17, 17, 26, 0.4);
+            --bg-card-hover: rgba(25, 25, 35, 0.5);
+            --bg-input: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --text-muted: rgba(255, 255, 255, 0.4);
             --accent: #6366f1;
             --accent-glow: rgba(99, 102, 241, 0.3);
-            --accent-secondary: #8b5cf6;
-            --success: #22c55e;
-            --success-bg: rgba(34, 197, 94, 0.12);
+            --success: #10b981;
             --warning: #f59e0b;
-            --warning-bg: rgba(245, 158, 11, 0.12);
             --critical: #ef4444;
-            --critical-bg: rgba(239, 68, 68, 0.12);
-            --gradient-start: #6366f1;
-            --gradient-end: #8b5cf6;
-            --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
-            --shadow-md: 0 8px 32px rgba(0,0,0,0.4);
-            --shadow-lg: 0 16px 64px rgba(0,0,0,0.5);
-            --radius-sm: 8px;
-            --radius-md: 12px;
-            --radius-lg: 16px;
-            --radius-xl: 24px;
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --gradient-primary: linear-gradient(135deg, #6366f1, #8b5cf6);
+            --shadow-lg: 0 16px 64px rgba(0,0,0,0.4);
+            --blur: saturate(180%) blur(20px);
+            --radius-xl: 20px;
+            --transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
 
         @media (prefers-color-scheme: light) {
             :root:not([data-theme="dark"]) {
-                --bg-primary: #f8f9fc;
-                --bg-secondary: #ffffff;
-                --bg-card: #ffffff;
-                --bg-card-hover: #f0f1f8;
-                --bg-input: #f0f1f8;
-                --border: #e0e2ec;
-                --text-primary: #1a1a2e;
-                --text-secondary: #555570;
-                --text-muted: #8888a8;
-                --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
-                --shadow-md: 0 8px 32px rgba(0,0,0,0.08);
-                --shadow-lg: 0 16px 64px rgba(0,0,0,0.1);
-            }
-        }
-
-        @media (prefers-color-scheme: dark) {
-            :root:not([data-theme="light"]) {
-                --bg-primary: #0a0a0f;
-                --bg-secondary: #12121a;
-                --bg-card: #1a1a2e;
-                --bg-card-hover: #22223a;
-                --bg-input: #16162a;
-                --border: #2a2a40;
-                --text-primary: #e8e8f0;
-                --text-secondary: #8888a8;
-                --text-muted: #555570;
+                --bg-primary: #ffffff;
+                --bg-secondary: #f8fafc;
+                --bg-card: rgba(255, 255, 255, 0.7);
+                --bg-input: rgba(0, 0, 0, 0.03);
+                --border: rgba(0, 0, 0, 0.1);
+                --text-primary: #1e293b;
+                --text-secondary: #64748b;
+                --text-muted: #94a3b8;
             }
         }
 
@@ -84,37 +57,17 @@
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             line-height: 1.6;
             min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        h1, h2, h3, h4, h5, h6 {
-            font-family: 'Space Grotesk', -apple-system, sans-serif;
-        }
-
-        /* Animated background */
-        .bg-grid {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
             background-image:
-                radial-gradient(circle at 20% 50%, rgba(99, 102, 241, 0.08) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.06) 0%, transparent 50%),
-                radial-gradient(circle at 50% 80%, rgba(99, 102, 241, 0.04) 0%, transparent 50%);
-            pointer-events: none;
-            z-index: 0;
+                radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 20%);
         }
 
         .container {
-            max-width: 1280px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 24px;
-            position: relative;
-            z-index: 1;
         }
 
-        /* Header */
         header {
             display: flex;
             justify-content: space-between;
@@ -133,216 +86,186 @@
         }
 
         .logo-icon {
-            width: 48px;
-            height: 48px;
-            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
-            border-radius: var(--radius-md);
+            width: 52px;
+            height: 52px;
+            background: var(--gradient-primary);
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 22px;
-            box-shadow: 0 4px 20px var(--accent-glow);
+            font-size: 24px;
+            box-shadow: 0 8px 32px var(--accent-glow);
         }
 
         h1 {
+            font-family: 'Plus Jakarta Sans', sans-serif;
             font-size: 28px;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--text-primary), var(--accent));
+            font-weight: 800;
+            background: var(--gradient-primary);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
 
         .header-subtitle {
-            font-size: 13px;
-            color: var(--text-muted);
-            margin-top: 2px;
-        }
-
-        /* Buttons */
-        button {
-            padding: 10px 20px;
-            border: none;
-            font-family: inherit;
             font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            border-radius: var(--radius-sm);
+            color: var(--text-muted);
+            margin-top: 4px;
         }
 
-        .btn-primary {
-            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
-            color: white;
-            box-shadow: 0 4px 16px var(--accent-glow);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px var(--accent-glow);
-        }
-
-        .btn-secondary {
-            background: var(--bg-card);
-            color: var(--text-primary);
-            border: 1px solid var(--border);
-        }
-
-        .btn-secondary:hover {
-            background: var(--bg-card-hover);
-            border-color: var(--text-muted);
-        }
-
-        .btn-danger {
-            background: var(--critical-bg);
-            color: var(--critical);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-        }
-
-        .btn-danger:hover {
-            background: rgba(239, 68, 68, 0.2);
-        }
-
-        .btn-sm {
-            padding: 6px 12px;
-            font-size: 12px;
-            font-weight: 500;
-            border-radius: var(--radius-sm);
-        }
-
-        /* Stats */
         .stats {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 16px;
-            margin-bottom: 32px;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 28px;
         }
 
         .stat-card {
             background: var(--bg-card);
+            backdrop-filter: var(--blur);
             border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            padding: 24px;
-            position: relative;
-            overflow: hidden;
+            border-radius: var(--radius-xl);
+            padding: 28px;
             transition: var(--transition);
         }
 
         .stat-card:hover {
-            transform: translateY(-2px);
+            transform: translateY(-6px);
             border-color: var(--accent);
-            box-shadow: 0 8px 32px rgba(99, 102, 241, 0.1);
-        }
-
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+            box-shadow: var(--shadow-lg);
         }
 
         .stat-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: var(--radius-sm);
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
-            margin-bottom: 12px;
+            font-size: 20px;
+            margin-bottom: 16px;
         }
 
         .stat-icon.blue { background: rgba(99, 102, 241, 0.15); color: #6366f1; }
-        .stat-icon.green { background: var(--success-bg); color: var(--success); }
-        .stat-icon.yellow { background: var(--warning-bg); color: var(--warning); }
-        .stat-icon.red { background: var(--critical-bg); color: var(--critical); }
+        .stat-icon.green { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+        .stat-icon.yellow { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+        .stat-icon.red { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
 
         .stat-value {
-            font-size: 32px;
-            font-weight: 700;
-            font-family: 'Space Grotesk', sans-serif;
-            line-height: 1;
-            margin-bottom: 4px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 8px;
         }
 
         .stat-label {
             font-size: 13px;
             color: var(--text-secondary);
-            font-weight: 500;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        /* Filters */
+        .search-bar {
+            position: relative;
+            margin-bottom: 24px;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 16px 20px 16px 56px;
+            border: none;
+            background: var(--bg-input);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 15px;
+            transition: var(--transition);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+
+        .search-bar input:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
+            background: var(--bg-card);
+        }
+
+        .search-bar i {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 18px;
+        }
+
         .filters {
             display: flex;
-            gap: 8px;
-            margin-bottom: 24px;
+            gap: 12px;
+            margin-bottom: 28px;
             flex-wrap: wrap;
         }
 
         .filter-chip {
-            padding: 8px 16px;
+            padding: 10px 20px;
             border: 1px solid var(--border);
-            background: var(--bg-card);
-            border-radius: 100px;
+            background: var(--bg-input);
+            border-radius: 50px;
             cursor: pointer;
-            font-size: 13px;
-            font-weight: 500;
+            font-size: 14px;
+            font-weight: 600;
             color: var(--text-secondary);
             transition: var(--transition);
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
         }
 
         .filter-chip:hover {
-            border-color: var(--accent);
+            background: var(--bg-card);
             color: var(--text-primary);
         }
 
         .filter-chip.active {
-            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            background: var(--gradient-primary);
             color: white;
-            border-color: transparent;
+            border: none;
+            box-shadow: 0 8px 32px var(--accent-glow);
         }
 
-        /* Subscription Grid */
         .subscriptions-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 24px;
             margin-bottom: 32px;
         }
 
         .subscription-card {
             background: var(--bg-card);
+            backdrop-filter: var(--blur);
             border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            padding: 24px;
+            border-radius: var(--radius-xl);
+            padding: 28px;
             transition: var(--transition);
-            position: relative;
             overflow: hidden;
         }
 
         .subscription-card:hover {
             transform: translateY(-4px);
             border-color: var(--accent);
-            box-shadow: 0 12px 40px rgba(99, 102, 241, 0.12);
+            box-shadow: var(--shadow-lg);
         }
 
         .card-top {
             display: flex;
-            gap: 16px;
+            gap: 20px;
             align-items: flex-start;
-            margin-bottom: 16px;
+            margin-bottom: 20px;
         }
 
         .card-logo {
-            width: 56px;
-            height: 56px;
-            border-radius: var(--radius-md);
+            width: 80px;
+            height: 80px;
+            border-radius: var(--radius-xl);
             background: var(--bg-input);
             border: 1px solid var(--border);
             display: flex;
@@ -350,38 +273,41 @@
             justify-content: center;
             font-size: 28px;
             flex-shrink: 0;
-            transition: var(--transition);
+            overflow: hidden;
+        }
+
+        .card-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .subscription-card:hover .card-logo {
             border-color: var(--accent);
-            box-shadow: 0 4px 16px var(--accent-glow);
+            box-shadow: 0 8px 32px var(--accent-glow);
         }
 
         .card-info {
             flex: 1;
-            min-width: 0;
         }
 
         .card-name {
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 4px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 8px;
         }
 
         .card-badge {
             display: inline-flex;
             align-items: center;
-            gap: 4px;
-            padding: 3px 10px;
-            border-radius: 100px;
-            font-size: 11px;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 50px;
+            font-size: 12px;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            margin-right: 8px;
         }
 
         .card-badge.type {
@@ -390,30 +316,31 @@
         }
 
         .card-badge.status-critical {
-            background: var(--critical-bg);
+            background: rgba(239, 68, 68, 0.12);
             color: var(--critical);
         }
 
         .card-badge.status-warning {
-            background: var(--warning-bg);
+            background: rgba(245, 158, 11, 0.12);
             color: var(--warning);
         }
 
         .card-badge.status-success {
-            background: var(--success-bg);
+            background: rgba(16, 185, 129, 0.12);
             color: var(--success);
         }
 
         .card-details {
             display: grid;
-            gap: 10px;
+            gap: 12px;
+            margin-top: 12px;
         }
 
         .detail-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 13px;
+            font-size: 14px;
         }
 
         .detail-label {
@@ -423,97 +350,122 @@
             gap: 6px;
         }
 
-        .detail-label i {
-            font-size: 11px;
-        }
-
         .detail-value {
             font-weight: 600;
             color: var(--text-primary);
         }
 
-        .card-progress {
-            margin-top: 12px;
-            height: 4px;
+        .card-progress-container {
+            margin-top: 16px;
+            height: 6px;
             background: var(--bg-input);
-            border-radius: 2px;
+            border-radius: 3px;
             overflow: hidden;
         }
 
         .card-progress-bar {
             height: 100%;
-            border-radius: 2px;
-            transition: width 0.6s ease;
+            border-radius: 3px;
+            background: var(--gradient-primary);
+            transition: width 0.8s ease;
         }
 
         .card-actions {
             display: flex;
-            gap: 8px;
-            margin-top: 16px;
-            padding-top: 16px;
+            gap: 12px;
+            margin-top: 20px;
+            padding-top: 20px;
             border-top: 1px solid var(--border);
         }
 
         .card-actions button {
             flex: 1;
+            padding: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: var(--transition);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
         }
 
-        /* Empty State */
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: var(--bg-input);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-card);
+        }
+
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.12);
+            color: var(--critical);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-danger:hover {
+            background: rgba(239, 68, 68, 0.2);
+        }
+
         .empty-state {
             text-align: center;
-            padding: 64px 24px;
-            color: var(--text-secondary);
+            padding: 80px 24px;
             grid-column: 1 / -1;
         }
 
         .empty-state-icon {
-            font-size: 64px;
-            margin-bottom: 16px;
-            opacity: 0.4;
+            font-size: 80px;
+            margin-bottom: 24px;
+            opacity: 0.2;
         }
 
         .empty-state h3 {
-            font-size: 20px;
-            margin-bottom: 8px;
-            color: var(--text-primary);
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
         }
 
-        /* Modal */
         .modal-overlay {
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(8px);
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(12px);
             z-index: 1000;
             align-items: center;
             justify-content: center;
             padding: 24px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
         }
 
         .modal-overlay.show {
             display: flex;
-            opacity: 1;
         }
 
         .modal {
             background: var(--bg-secondary);
+            backdrop-filter: var(--blur);
             border: 1px solid var(--border);
             border-radius: var(--radius-xl);
-            padding: 32px;
-            max-width: 520px;
+            padding: 36px;
+            max-width: 560px;
             width: 100%;
-            max-height: 90vh;
+            max-height: 92vh;
             overflow-y: auto;
             box-shadow: var(--shadow-lg);
-            transform: scale(0.95);
-            transition: transform 0.3s ease;
-        }
-
-        .modal-overlay.show .modal {
-            transform: scale(1);
         }
 
         .modal-header {
@@ -521,73 +473,73 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 28px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
         }
 
         .modal-header h2 {
-            font-size: 22px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 24px;
             font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .close-btn {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            color: var(--text-secondary);
-            width: 36px;
-            height: 36px;
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: var(--bg-input);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 18px;
+            color: var(--text-secondary);
             cursor: pointer;
-            padding: 0;
+            border: 1px solid var(--border);
             transition: var(--transition);
         }
 
         .close-btn:hover {
-            background: var(--critical-bg);
+            background: rgba(239, 68, 68, 0.12);
             color: var(--critical);
-            border-color: var(--critical);
         }
 
-        /* Form */
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 24px;
         }
 
         .form-label {
             display: flex;
             align-items: center;
-            gap: 6px;
-            margin-bottom: 8px;
+            gap: 8px;
+            margin-bottom: 10px;
             font-weight: 600;
-            font-size: 13px;
+            font-size: 14px;
             color: var(--text-secondary);
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
-        .form-label i {
-            font-size: 12px;
-            color: var(--accent);
-        }
-
         .form-input {
             width: 100%;
-            padding: 12px 16px;
+            padding: 16px 20px;
             border: 1px solid var(--border);
-            border-radius: var(--radius-sm);
             background: var(--bg-input);
+            border-radius: 12px;
             color: var(--text-primary);
             font-family: inherit;
-            font-size: 14px;
+            font-size: 15px;
             transition: var(--transition);
         }
 
         .form-input:focus {
             outline: none;
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px var(--accent-glow);
+            border-color: rgba(99, 102, 241, 0.4);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+            background: var(--bg-card);
         }
 
         .form-input::placeholder {
@@ -597,285 +549,96 @@
         select.form-input {
             cursor: pointer;
             appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238888a8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
-            background-position: right 12px center;
+            background-position: right 20px center;
             padding-right: 40px;
         }
 
         textarea.form-input {
             resize: vertical;
-            min-height: 80px;
+            min-height: 100px;
         }
 
         .form-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 16px;
+            gap: 20px;
         }
 
         .form-actions {
             display: flex;
-            gap: 12px;
-            margin-top: 28px;
+            gap: 16px;
+            margin-top: 32px;
         }
 
         .form-actions button {
             flex: 1;
-            padding: 12px;
+            padding: 16px;
+            font-weight: 700;
         }
 
-        /* Alert */
-        .alert {
-            padding: 14px 20px;
-            border-radius: var(--radius-sm);
-            margin-bottom: 20px;
-            font-size: 14px;
-            font-weight: 500;
-            display: none;
-            align-items: center;
-            gap: 10px;
-            animation: slideDown 0.3s ease;
-        }
-
-        .alert.show {
-            display: flex;
-        }
-
-        .alert.success {
-            background: var(--success-bg);
-            color: var(--success);
-            border: 1px solid rgba(34, 197, 94, 0.3);
-        }
-
-        .alert.error {
-            background: var(--critical-bg);
-            color: var(--critical);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-        }
-
-        @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Search */
-        .search-bar {
-            position: relative;
-            margin-bottom: 20px;
-        }
-
-        .search-bar input {
-            width: 100%;
-            padding: 12px 16px 12px 44px;
-            border: 1px solid var(--border);
-            border-radius: var(--radius-sm);
-            background: var(--bg-card);
-            color: var(--text-primary);
-            font-family: inherit;
-            font-size: 14px;
-            transition: var(--transition);
-        }
-
-        .search-bar input:focus {
-            outline: none;
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px var(--accent-glow);
-        }
-
-        .search-bar i {
-            position: absolute;
-            left: 16px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-muted);
-        }
-
-        /* Toast notification */
         .toast {
             position: fixed;
-            bottom: 24px;
-            right: 24px;
-            padding: 14px 20px;
-            border-radius: var(--radius-sm);
+            bottom: 28px;
+            right: 28px;
+            padding: 16px 24px;
+            border-radius: 12px;
             color: white;
-            font-weight: 500;
-            font-size: 14px;
+            font-weight: 600;
             z-index: 2000;
             display: none;
             align-items: center;
-            gap: 8px;
-            box-shadow: var(--shadow-md);
-            animation: slideIn 0.3s ease;
+            gap: 10px;
+            box-shadow: var(--shadow-lg);
         }
 
         .toast.show {
             display: flex;
         }
 
-        .toast.success { background: linear-gradient(135deg, #22c55e, #16a34a); }
+        .toast.success { background: linear-gradient(135deg, #10b981, #059669); }
         .toast.error { background: linear-gradient(135deg, #ef4444, #dc2626); }
 
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Responsive */
         @media (max-width: 768px) {
-            .container {
-                padding: 16px;
-            }
-
-            h1 {
-                font-size: 22px;
-            }
-
-            header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .stats {
-                grid-template-columns: 1fr 1fr;
-                gap: 12px;
-            }
-
-            .stat-card {
-                padding: 16px;
-            }
-
-            .stat-value {
-                font-size: 24px;
-            }
-
-            .subscriptions-grid {
-                grid-template-columns: 1fr;
-                gap: 16px;
-            }
-
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-
-            .modal {
-                padding: 24px;
-                margin: 16px;
-            }
-
-            .card-actions {
-                flex-direction: column;
-            }
+            .container { padding: 16px; }
+            h1 { font-size: 22px; }
+            .stats { grid-template-columns: 1fr 1fr; }
+            .subscriptions-grid { grid-template-columns: 1fr; }
+            .form-row { grid-template-columns: 1fr; }
+            header { flex-direction: column; align-items: flex-start; }
         }
 
-        @media (max-width: 480px) {
-            .stats {
-                grid-template-columns: 1fr;
-            }
-
-            .filters {
-                gap: 6px;
-            }
-
-            .filter-chip {
-                padding: 6px 12px;
-                font-size: 12px;
-            }
-        }
-
-        /* Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: var(--bg-secondary);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--border);
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--text-muted);
-        }
-
-        /* Floating particles animation */
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-20px) rotate(5deg); }
-        }
-
-        .notification-bell {
-            position: relative;
-            cursor: pointer;
-            padding: 8px;
-            border-radius: var(--radius-sm);
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            color: var(--text-secondary);
-            font-size: 18px;
-            transition: var(--transition);
-        }
-
-        .notification-bell:hover {
-            color: var(--accent);
-            border-color: var(--accent);
-        }
-
-        .notification-bell .dot {
-            position: absolute;
-            top: 4px;
-            right: 4px;
-            width: 8px;
-            height: 8px;
-            background: var(--critical);
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-secondary); }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
     </style>
 </head>
 <body>
-    <div class="bg-grid"></div>
-
     <div class="container">
         <header>
             <div class="logo-group">
-                <div class="logo-icon"><i class="fas fa-bell"></i></div>
+                <div class="logo-icon"><i class="fas fa-chart-line"></i></div>
                 <div>
-                    <h1>Subscription Manager</h1>
-                    <div class="header-subtitle">Track, manage, and never miss a renewal</div>
+                    <h1>Subscription Manager Pro</h1>
+                    <div class="header-subtitle">Track and optimize your recurring expenses</div>
                 </div>
             </div>
-            <div style="display: flex; gap: 12px; align-items: center;">
-                <button class="notification-bell" title="Notifications">
-                    <i class="fas fa-bell"></i>
-                    <span class="dot" id="notifDot"></span>
-                </button>
-                <button class="btn-primary" id="addBtn">
-                    <i class="fas fa-plus" style="margin-right: 6px;"></i>Add Subscription
-                </button>
-            </div>
+            <button class="btn-primary" id="addBtn">
+                <i class="fas fa-plus"></i>New Subscription
+            </button>
         </header>
-
-        <div class="alert" id="alert"></div>
 
         <div class="stats">
             <div class="stat-card">
                 <div class="stat-icon blue"><i class="fas fa-layer-group"></i></div>
                 <div class="stat-value" id="totalSubscriptions">0</div>
-                <div class="stat-label">Total Subscriptions</div>
+                <div class="stat-label">Active Subscriptions</div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon green"><i class="fas fa-check-circle"></i></div>
                 <div class="stat-value" id="dueSoon">0</div>
-                <div class="stat-label">Due This Week</div>
+                <div class="stat-label">Renewing Soon</div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon yellow"><i class="fas fa-dollar-sign"></i></div>
@@ -885,7 +648,7 @@
             <div class="stat-card">
                 <div class="stat-icon red"><i class="fas fa-exclamation-triangle"></i></div>
                 <div class="stat-value" id="overdueCount">0</div>
-                <div class="stat-label">Overdue</div>
+                <div class="stat-label">Past Due</div>
             </div>
         </div>
 
@@ -895,18 +658,10 @@
         </div>
 
         <div class="filters">
-            <button class="filter-chip active" data-filter="all">
-                <i class="fas fa-grip"></i>All
-            </button>
-            <button class="filter-chip" data-filter="OTT">
-                <i class="fas fa-film"></i>OTT
-            </button>
-            <button class="filter-chip" data-filter="Utility">
-                <i class="fas fa-bolt"></i>Utilities
-            </button>
-            <button class="filter-chip" data-filter="LLM">
-                <i class="fas fa-robot"></i>AI/LLM
-            </button>
+            <button class="filter-chip active" data-filter="all"><i class="fas fa-grip"></i>All</button>
+            <button class="filter-chip" data-filter="OTT"><i class="fas fa-tv"></i>Entertainment</button>
+            <button class="filter-chip" data-filter="Utility"><i class="fas fa-bolt"></i>Utilities</button>
+            <button class="filter-chip" data-filter="LLM"><i class="fas fa-robot"></i>AI Services</button>
         </div>
 
         <div id="subscriptionsList" class="subscriptions-grid"></div>
@@ -916,19 +671,19 @@
     <div class="modal-overlay" id="modal">
         <div class="modal">
             <div class="modal-header">
-                <h2 id="modalTitle"><i class="fas fa-plus-circle" style="margin-right: 8px; color: var(--accent);"></i>Add New Subscription</h2>
+                <h2 id="modalTitle"><i class="fas fa-plus-circle"></i>Add Subscription</h2>
                 <button class="close-btn" id="closeModal">&times;</button>
             </div>
             <form id="subscriptionForm">
                 <div class="form-group">
-                    <label class="form-label"><i class="fas fa-tag"></i> Name *</label>
-                    <input type="text" id="name" class="form-input" placeholder="e.g., Netflix, Netflix Premium" required>
+                    <label class="form-label"><i class="fas fa-tag"></i> Name</label>
+                    <input type="text" id="name" class="form-input" placeholder="e.g., Netflix Premium" required>
                 </div>
                 <div class="form-group">
-                    <label class="form-label"><i class="fas fa-folder"></i> Category *</label>
+                    <label class="form-label"><i class="fas fa-folder"></i> Category</label>
                     <select id="category" class="form-input" required>
                         <option value="">Select Category</option>
-                        <optgroup label="OTT Platforms">
+                        <optgroup label="📺 Entertainment">
                             <option value="OTT">Netflix</option>
                             <option value="OTT">Prime Video</option>
                             <option value="OTT">Disney+</option>
@@ -937,20 +692,19 @@
                             <option value="OTT">Sony Liv</option>
                             <option value="OTT">ZEE5</option>
                             <option value="OTT">Voot</option>
-                            <option value="OTT">Other OTT</option>
                         </optgroup>
-                        <optgroup label="Utilities">
+                        <optgroup label="🔌 Utilities & Recharge">
                             <option value="Utility">Electricity Bill</option>
                             <option value="Utility">Water Bill</option>
                             <option value="Utility">Internet/Broadband</option>
                             <option value="Utility">Mobile Postpaid</option>
+                            <option value="Utility">Mobile Prepaid</option>
                             <option value="Utility">Gas Bill</option>
-                            <option value="Utility">Other Utility</option>
                         </optgroup>
-                        <optgroup label="AI/LLM">
+                        <optgroup label="🤖 AI Services">
                             <option value="LLM">Claude Pro</option>
                             <option value="LLM">ChatGPT Plus</option>
-                            <option value="LLM">Other LLM</option>
+                            <option value="LLM">Gemini Pro</option>
                         </optgroup>
                     </select>
                 </div>
@@ -960,13 +714,13 @@
                         <input type="date" id="startDate" class="form-input">
                     </div>
                     <div class="form-group">
-                        <label class="form-label"><i class="fas fa-calendar-check"></i> Renewal Date *</label>
+                        <label class="form-label"><i class="fas fa-calendar-check"></i> Renewal Date</label>
                         <input type="date" id="renewalDate" class="form-input" required>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label"><i class="fas fa-clock"></i> Subscription Type</label>
+                        <label class="form-label"><i class="fas fa-clock"></i> Type</label>
                         <select id="subscriptionType" class="form-input">
                             <option value="Monthly">Monthly</option>
                             <option value="Yearly">Yearly</option>
@@ -975,19 +729,13 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label class="form-label"><i class="fas fa-indian-rupee-sign"></i> Monthly Cost (₹)</label>
+                        <label class="form-label"><i class="fas fa-indian-rupee-sign"></i> Cost (₹)</label>
                         <input type="number" id="cost" class="form-input" step="0.01" min="0" placeholder="0.00">
                     </div>
                 </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label"><i class="fas fa-bell"></i> Reminder Days</label>
-                        <input type="number" id="reminderDays" class="form-input" value="3" min="0" max="30">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label"><i class="fas fa-tag"></i> Category Icon</label>
-                        <input type="text" id="customIcon" class="form-input" placeholder="e.g., 🎬, ⚡">
-                    </div>
+                <div class="form-group">
+                    <label class="form-label"><i class="fas fa-bell"></i> Reminder Days</label>
+                    <input type="number" id="reminderDays" class="form-input" value="3" min="0" max="30">
                 </div>
                 <div class="form-group">
                     <label class="form-label"><i class="fas fa-note-sticky"></i> Notes</label>
@@ -995,9 +743,7 @@
                 </div>
                 <div class="form-actions">
                     <button type="button" class="btn-secondary" id="cancelBtn">Cancel</button>
-                    <button type="submit" class="btn-primary" id="submitBtn">
-                        <i class="fas fa-plus" id="submitIcon" style="margin-right: 6px;"></i>Add Subscription
-                    </button>
+                    <button type="submit" class="btn-primary" id="submitBtn"><i class="fas fa-save"></i>Save</button>
                 </div>
             </form>
         </div>
@@ -1012,17 +758,30 @@
         let currentFilter = 'all';
         let searchQuery = '';
 
+        // Logos mapping with CDN URLs
         const subscriptionLogos = {
-            'Netflix': '🎬', 'Prime Video': '🎥', 'Disney+': '✨', 'Jio Savn': '🎵',
-            'Hotstar': '📺', 'Sony Liv': '📽️', 'ZEE5': '🎞️', 'Voot': '📺',
-            'Claude Pro': '🤖', 'ChatGPT Plus': '💬', 'Electricity Bill': '⚡',
-            'Water Bill': '💧', 'Internet/Broadband': '🌐', 'Mobile Postpaid': '📱',
-            'Gas Bill': '🔥', 'Other OTT': '🎫', 'Other LLM': '🧠', 'Other Utility': '📋'
+            'Netflix': 'https://pngimg.com/uploads/netflix/netflix_PNG10.png',
+            'Prime Video': 'https://pngimg.com/uploads/amazon_prime/amazon_prime_PNG15.png',
+            'Disney+': 'https://pngimg.com/uploads/disney/disney_PNG20.png',
+            'Jio Savn': 'https://pngimg.com/uploads/youtube/youtube_PNG32.png',
+            'Hotstar': 'https://pngimg.com/uploads/youtube/youtube_PNG32.png',
+            'Sony Liv': 'https://pngimg.com/uploads/youtube/youtube_PNG32.png',
+            'ZEE5': 'https://pngimg.com/uploads/youtube/youtube_PNG32.png',
+            'Voot': 'https://pngimg.com/uploads/youtube/youtube_PNG32.png',
+            'Claude Pro': 'https://cdn-avatars.huggingface.co/v1/organizations/Anthropic/v1-bb46cd7f88d7f1b843ce640032e2f0e9f9f7ff7b/img.webp',
+            'ChatGPT Plus': 'https://upload.wikimedia.org/wikipedia/commons/0/04/ChatGPT_logo.svg',
+            'Gemini Pro': 'https://upload.wikimedia.org/wikipedia/commons/e/e6/Google_Gemini_logo.png',
+            'Electricity Bill': '⚡',
+            'Water Bill': '💧',
+            'Internet/Broadband': '🌐',
+            'Mobile Postpaid': '📱',
+            'Mobile Prepaid': '📱',
+            'Gas Bill': '🔥'
         };
 
         async function fetchSubscriptions(filter = 'all') {
             try {
-                const url = filter === 'all' ? `${API_BASE}/subscriptions` : `${API_BASE}/subscriptions?filter=${filter}`;
+                const url = filter === 'all' ? `${API_BASE}/subscriptions` : `${API_BASE}/subscriptions?category=${filter}`;
                 const response = await fetch(url);
                 if (!response.ok) throw new Error('Failed to fetch');
                 return await response.json();
@@ -1080,7 +839,7 @@
         }
 
         async function deleteSubscription(id) {
-            if (!confirm('Are you sure you want to delete this subscription?')) return;
+            if (!confirm('Delete this subscription?')) return;
             try {
                 const response = await fetch(`${API_BASE}/subscriptions/${id}`, { method: 'DELETE' });
                 if (!response.ok) throw new Error('Failed to delete');
@@ -1094,49 +853,38 @@
 
         function showToast(message, type = 'success') {
             const toast = document.getElementById('toast');
-            toast.textContent = (type === 'success' ? '✅ ' : '❌ ') + message;
+            toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check' : 'fa-exclamation'}"></i>${message}`;
             toast.className = `toast show ${type}`;
             setTimeout(() => toast.classList.remove('show'), 3000);
-        }
-
-        function showAlert(message, type = 'success') {
-            const alert = document.getElementById('alert');
-            alert.textContent = message;
-            alert.className = `alert show ${type}`;
-            setTimeout(() => alert.classList.remove('show'), 3000);
         }
 
         function openModal(id = null) {
             currentEditId = id;
             const form = document.getElementById('subscriptionForm');
-            const modal = document.getElementById('modal');
-
             form.reset();
 
             if (id) {
-                // Load subscription data for editing
-                const sub = subscriptions.find(s => s.id === id);
-                if (!sub) {
-                    showToast('Subscription not found', 'error');
-                    return;
-                }
-
-                document.getElementById('modalTitle').innerHTML = '<i class="fas fa-edit" style="margin-right: 8px; color: var(--accent);"></i>Edit Subscription';
-                document.getElementById('submitBtn').innerHTML = '<i class="fas fa-check" id="submitIcon" style="margin-right: 6px;"></i>Update Subscription';
-                document.getElementById('name').value = sub.name || '';
-                document.getElementById('category').value = sub.category || '';
-                document.getElementById('startDate').value = sub.start_date || '';
-                document.getElementById('renewalDate').value = sub.renewal_date || '';
-                document.getElementById('subscriptionType').value = sub.subscription_type || 'Monthly';
-                document.getElementById('cost').value = sub.cost || '';
-                document.getElementById('reminderDays').value = sub.reminder_days || 3;
-                document.getElementById('notes').value = sub.notes || '';
+                // Get subscription and load data
+                subscriptions.forEach(async (sub) => {
+                    if (sub.id === id) {
+                        document.getElementById('modalTitle').innerHTML = '<i class="fas fa-edit"></i>Edit Subscription';
+                        document.getElementById('submitBtn').innerHTML = '<i class="fas fa-check"></i>Update';
+                        document.getElementById('name').value = sub.name || '';
+                        document.getElementById('category').value = sub.category || '';
+                        document.getElementById('startDate').value = (sub.start_date || '').split('T')[0];
+                        document.getElementById('renewalDate').value = (sub.renewal_date || '').split('T')[0];
+                        document.getElementById('subscriptionType').value = sub.subscription_type || 'Monthly';
+                        document.getElementById('cost').value = sub.cost || 0;
+                        document.getElementById('reminderDays').value = sub.reminder_days || 3;
+                        document.getElementById('notes').value = sub.notes || '';
+                    }
+                });
             } else {
-                document.getElementById('modalTitle').innerHTML = '<i class="fas fa-plus-circle" style="margin-right: 8px; color: var(--accent);"></i>Add New Subscription';
-                document.getElementById('submitBtn').innerHTML = '<i class="fas fa-plus" id="submitIcon" style="margin-right: 6px;"></i>Add Subscription';
+                document.getElementById('modalTitle').innerHTML = '<i class="fas fa-plus-circle"></i>Add Subscription';
+                document.getElementById('submitBtn').innerHTML = '<i class="fas fa-save"></i>Save';
             }
 
-            modal.classList.add('show');
+            document.getElementById('modal').classList.add('show');
             document.body.style.overflow = 'hidden';
         }
 
@@ -1147,21 +895,9 @@
         }
 
         function getStatusInfo(daysLeft) {
-            if (daysLeft < 0) return { class: 'status-critical', text: `${Math.abs(daysLeft)}d Overdue`, color: '#ef4444' };
-            if (daysLeft <= 3) return { class: 'status-warning', text: `${daysLeft}d Left`, color: '#f59e0b' };
-            return { class: 'status-success', text: `${daysLeft}d Left`, color: '#22c55e' };
-        }
-
-        function getProgressPercent(daysLeft, totalDays) {
-            if (totalDays <= 0) return 100;
-            const percent = Math.max(0, Math.min(100, ((totalDays - daysLeft) / totalDays) * 100));
-            return Math.round(percent);
-        }
-
-        function getProgressColor(statusClass) {
-            if (statusClass === 'status-critical') return '#ef4444';
-            if (statusClass === 'status-warning') return '#f59e0b';
-            return '#22c55e';
+            if (daysLeft < 0) return { class: 'status-critical', text: `${Math.abs(daysLeft)}d Overdue` };
+            if (daysLeft <= 3) return { class: 'status-warning', text: `${daysLeft}d Left` };
+            return { class: 'status-success', text: `${daysLeft}d Left` };
         }
 
         function formatDate(dateStr) {
@@ -1170,67 +906,63 @@
             return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
         }
 
-        function getLogo(name) {
-            if (subscriptionLogos[name]) return subscriptionLogos[name];
-            // Try matching partial names
-            for (const [key, logo] of Object.entries(subscriptionLogos)) {
-                if (name.toLowerCase().includes(key.toLowerCase()) || key.toLowerCase().includes(name.toLowerCase())) {
-                    return logo;
-                }
+        function getLogoUrl(name) {
+            return subscriptionLogos[name] || '🎫';
+        }
+
+        function renderLogoHtml(name) {
+            const logo = getLogoUrl(name);
+            if (logo.startsWith('http')) {
+                return `<img src="${logo}" alt="${name}" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'">`;
             }
-            return '🎫';
+            return logo;
         }
 
         async function renderSubscriptions() {
             const subs = await fetchSubscriptions(currentFilter);
+            subscriptions = subs; // Store for edit functionality
             const container = document.getElementById('subscriptionsList');
 
-            // Filter by search
             let filtered = subs;
             if (searchQuery) {
-                filtered = subs.filter(s => s.name.toLowerCase().includes(searchQuery.toLowerCase()) || s.category.toLowerCase().includes(searchQuery.toLowerCase()));
+                filtered = subs.filter(s =>
+                    s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    (s.category || '').toLowerCase().includes(searchQuery.toLowerCase())
+                );
             }
 
             if (filtered.length === 0) {
                 container.innerHTML = `
                     <div class="empty-state">
                         <div class="empty-state-icon">📭</div>
-                        <h3>${searchQuery ? 'No results found' : 'No subscriptions yet'}</h3>
-                        <p>${searchQuery ? 'Try adjusting your search or filter' : 'Click "Add Subscription" to get started!'}</p>
+                        <h3>${searchQuery ? 'No results' : 'No subscriptions yet'}</h3>
                     </div>
                 `;
                 return;
             }
 
             container.innerHTML = filtered.map(sub => {
-                const daysLeft = sub.days_left;
+                const daysLeft = sub.days_left || 0;
                 const statusInfo = getStatusInfo(daysLeft);
-                const logo = getLogo(sub.name);
                 const renewalDate = formatDate(sub.renewal_date);
-                const startDateStr = sub.start_date ? formatDate(sub.start_date) : 'N/A';
+                const startDate = formatDate(sub.start_date);
                 const totalDays = sub.renewal_date && sub.start_date ? Math.max(1, Math.ceil((new Date(sub.renewal_date) - new Date(sub.start_date)) / (1000 * 60 * 60 * 24))) : 0;
-                const progress = getProgressPercent(daysLeft, totalDays);
+                const progress = totalDays > 0 ? Math.round(((totalDays - daysLeft) / totalDays) * 100) : 0;
 
                 return `
                     <div class="subscription-card">
                         <div class="card-top">
-                            <div class="card-logo">${logo}</div>
+                            <div class="card-logo">${renderLogoHtml(sub.name)}</div>
                             <div class="card-info">
                                 <div class="card-name">${sub.name}</div>
-                                <span style="display: flex; gap: 6px; flex-wrap: wrap;">
-                                    <span class="card-badge type">${sub.subscription_type}</span>
-                                    <span class="card-badge ${statusInfo.class}">${statusInfo.text}</span>
-                                </span>
+                                <span class="card-badge type">${sub.subscription_type}</span>
+                                <span class="card-badge ${statusInfo.class}">${statusInfo.text}</span>
                             </div>
                         </div>
                         <div class="card-details">
                             <div class="detail-row">
-                                <span class="detail-label"><i class="fas fa-tag"></i> Category</span>
-                                <span class="detail-value">${sub.category}</span>
-                            </div>
-                            <div class="detail-row">
-                                <span class="detail-label"><i class="fas fa-calendar-plus"></i> Start</span>
-                                <span class="detail-value">${startDateStr}</span>
+                                <span class="detail-label"><i class="fas fa-calendar-plus"></i> Started</span>
+                                <span class="detail-value">${startDate}</span>
                             </div>
                             <div class="detail-row">
                                 <span class="detail-label"><i class="fas fa-calendar-check"></i> Renewal</span>
@@ -1241,19 +973,19 @@
                                 <span class="detail-value">₹${(sub.cost || 0).toFixed(2)}</span>
                             </div>
                             <div class="detail-row">
-                                <span class="detail-label"><i class="fas fa-clock"></i> Duration</span>
+                                <span class="detail-label"><i class="fas fa-history"></i> Duration</span>
                                 <span class="detail-value">${totalDays > 0 ? totalDays + ' days' : 'N/A'}</span>
                             </div>
                         </div>
-                        <div class="card-progress">
-                            <div class="card-progress-bar" style="width: ${progress}%; background: ${getProgressColor(statusInfo.class)};"></div>
+                        <div class="card-progress-container">
+                            <div class="card-progress-bar" style="width: ${progress}%"></div>
                         </div>
                         <div class="card-actions">
-                            <button class="btn-sm btn-secondary" onclick="openModal(${sub.id})">
-                                <i class="fas fa-edit"></i> Edit
+                            <button class="btn-secondary" onclick="openModal(${sub.id})">
+                                <i class="fas fa-edit"></i>Edit
                             </button>
-                            <button class="btn-sm btn-danger" onclick="deleteSubscription(${sub.id})">
-                                <i class="fas fa-trash"></i> Delete
+                            <button class="btn-danger" onclick="deleteSubscription(${sub.id})">
+                                <i class="fas fa-trash"></i>Delete
                             </button>
                         </div>
                     </div>
@@ -1264,14 +996,10 @@
         async function updateStats() {
             const stats = await fetchStats();
             if (stats) {
-                document.getElementById('totalSubscriptions').textContent = stats.total_subscriptions;
-                document.getElementById('dueSoon').textContent = stats.due_soon;
-                document.getElementById('monthlySpend').textContent = `₹${stats.monthly_spend.toFixed(0)}`;
-                document.getElementById('overdueCount').textContent = stats.overdue;
-
-                // Show/hide notification dot
-                const dot = document.getElementById('notifDot');
-                dot.style.display = (stats.overdue > 0 || stats.due_soon > 0) ? 'block' : 'none';
+                document.getElementById('totalSubscriptions').textContent = stats.total_subscriptions || 0;
+                document.getElementById('dueSoon').textContent = stats.due_soon || 0;
+                document.getElementById('monthlySpend').textContent = `₹${(stats.monthly_spend || 0).toFixed(0)}`;
+                document.getElementById('overdueCount').textContent = stats.overdue || 0;
             }
         }
 
@@ -1280,50 +1008,44 @@
             await updateStats();
         }
 
+        // Event listeners
         document.getElementById('addBtn').addEventListener('click', () => openModal());
         document.getElementById('closeModal').addEventListener('click', closeModal);
         document.getElementById('cancelBtn').addEventListener('click', closeModal);
 
-        // Search
         document.getElementById('searchInput').addEventListener('input', (e) => {
             searchQuery = e.target.value;
             renderSubscriptions();
         });
 
-        // Form submit
         document.getElementById('subscriptionForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
             const data = {
-                name: document.getElementById('name').value.trim(),
+                name: document.getElementById('name').value,
                 category: document.getElementById('category').value,
                 start_date: document.getElementById('startDate').value || null,
                 renewal_date: document.getElementById('renewalDate').value,
                 subscription_type: document.getElementById('subscriptionType').value,
                 cost: parseFloat(document.getElementById('cost').value) || 0,
                 reminder_days: parseInt(document.getElementById('reminderDays').value) || 3,
-                notes: document.getElementById('notes').value.trim()
+                notes: document.getElementById('notes').value
             };
 
-            // Validate dates
-            if (!data.start_date) {
-                delete data.start_date;
-            }
+            if (!data.start_date) delete data.start_date;
 
             if (currentEditId) {
-                // For edit, always include start_date even if empty
                 const result = await updateSubscription(currentEditId, data);
-                if (result?.success) showToast('Updated successfully!', 'success');
+                if (result?.success) showToast('Updated!', 'success');
             } else {
                 const result = await createSubscription(data);
-                if (result?.success) showToast('Added successfully!', 'success');
+                if (result?.success) showToast('Added!', 'success');
             }
 
             closeModal();
             await loadData();
         });
 
-        // Filter chips
         document.querySelectorAll('.filter-chip').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
@@ -1333,20 +1055,14 @@
             });
         });
 
-        // Modal overlay click to close
         document.getElementById('modal').addEventListener('click', (e) => {
             if (e.target.id === 'modal') closeModal();
         });
 
-        // Keyboard shortcut
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') closeModal();
-            if (e.key === 'n' && !e.ctrlKey && !e.metaKey && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA' && document.activeElement.tagName !== 'SELECT') {
-                openModal();
-            }
         });
 
-        // Initial load
         loadData();
         setInterval(loadData, 30000);
     </script>
