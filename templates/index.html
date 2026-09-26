@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscription & Bill Reminder</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
+    <style>
+        :root {
+            --color-bg: #ffffff;
+            --color-surface: #f8f9fa;
+            --color-border: #e5e7eb;
+            --color-text: #1f2937;
+            --color-text-secondary: #6b7280;
+            --color-text-tertiary: #9ca3af;
+            --color-accent: #3b82f6;
+            --color-accent-light: #eff6ff;
+            --color-success: #10b981;
+            --color-warning: #f59e0b;
+            --color-critical: #ef4444;
+            --color-success-light: #ecfdf5;
+            --color-warning-light: #fffbeb;
+            --color-critical-light: #fef2f2;
+            --radius-sm: 6px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root:not([data-theme="light"]) {
+                --color-bg: #111827;
+                --color-surface: #1f2937;
+                --color-border: #374151;
+                --color-text: #f3f4f6;
+                --color-text-secondary: #d1d5db;
+                --color-text-tertiary: #9ca3af;
+                --color-accent-light: #1e3a8a;
+                --color-success-light: #064e3b;
+                --color-warning-light: #78350f;
+                --color-critical-light: #7f1d1d;
+            }
+        }
+
+        :root[data-theme="dark"] {
+            --color-bg: #111827;
+            --color-surface: #1f2937;
+            --color-border: #374151;
+            --color-text: #f3f4f6;
+            --color-text-secondary: #d1d5db;
+            --color-text-tertiary: #9ca3af;
+            --color-accent-light: #1e3a8a;
+            --color-success-light: #064e3b;
+            --color-warning-light: #78350f;
+            --color-critical-light: #7f1d1d;
+            color-scheme: dark;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--color-bg);
+            color: var(--color-text);
+            line-height: 1.6;
+            font-size: 14px;
+            padding: 16px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--color-text);
+            margin: 0;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 8px 16px;
+            border: 1px solid var(--color-border);
+            background: var(--color-surface);
+            color: var(--color-text);
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        button:hover {
+            background: var(--color-border);
+        }
+
+        button.primary {
+            background: var(--color-accent);
+            color: white;
+            border-color: var(--color-accent);
+        }
+
+        button.primary:hover {
+            background: #2563eb;
+        }
+
+        button.danger {
+            background: var(--color-critical);
+            color: white;
+            border-color: var(--color-critical);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--color-accent);
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--color-text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .filters {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 6px 12px;
+            border: 1px solid var(--color-border);
+            background: var(--color-surface);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .filter-btn.active {
+            background: var(--color-accent);
+            color: white;
+            border-color: var(--color-accent);
+        }
+
+        .dashboard {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-variant-numeric: tabular-nums;
+        }
+
+        thead {
+            background: var(--color-bg);
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        th {
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 12px;
+            color: var(--color-text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--color-border);
+            font-size: 14px;
+        }
+
+        tbody tr:hover {
+            background: var(--color-bg);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-critical {
+            background: var(--color-critical-light);
+            color: var(--color-critical);
+        }
+
+        .status-warning {
+            background: var(--color-warning-light);
+            color: var(--color-warning);
+        }
+
+        .status-success {
+            background: var(--color-success-light);
+            color: var(--color-success);
+        }
+
+        .category-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            background: var(--color-accent-light);
+            color: var(--color-accent);
+        }
+
+        .actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .btn-sm {
+            padding: 4px 8px;
+            font-size: 12px;
+            border: 1px solid var(--color-border);
+            background: var(--color-bg);
+            color: var(--color-text);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-sm:hover {
+            background: var(--color-border);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-md);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            font-size: 20px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--color-text-secondary);
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--color-text);
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            background: var(--color-bg);
+            color: var(--color-text);
+            font-family: inherit;
+            font-size: 14px;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--color-accent);
+            box-shadow: 0 0 0 3px var(--color-accent-light);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 24px;
+        }
+
+        .form-actions button {
+            flex: 1;
+        }
+
+        .alert {
+            display: none;
+            padding: 12px 16px;
+            border-radius: var(--radius-md);
+            margin-bottom: 16px;
+            font-size: 14px;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert.success {
+            background: var(--color-success-light);
+            color: var(--color-success);
+            border: 1px solid var(--color-success);
+        }
+
+        .alert.error {
+            background: var(--color-critical-light);
+            color: var(--color-critical);
+            border: 1px solid var(--color-critical);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 48px 24px;
+            color: var(--color-text-secondary);
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 20px;
+            }
+
+            .stats {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            table {
+                font-size: 13px;
+            }
+
+            th, td {
+                padding: 8px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>💰 Subscriptions & Bills</h1>
+            <div class="header-actions">
+                <button class="primary" id="addBtn">+ Add New</button>
+                <button id="exportBtn">📥 Export</button>
+            </div>
+        </header>
+
+        <div class="alert" id="alert"></div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-value" id="totalSubscriptions">0</div>
+                <div class="stat-label">Total Subscriptions</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="dueSoon">0</div>
+                <div class="stat-label">Due This Week</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="monthlySpend">₹0</div>
+                <div class="stat-label">Monthly Spend</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="overdueCount">0</div>
+                <div class="stat-label">Overdue</div>
+            </div>
+        </div>
+
+        <div class="filters">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="OTT">OTT Platforms</button>
+            <button class="filter-btn" data-filter="Utility">Utilities</button>
+            <button class="filter-btn" data-filter="LLM">AI/LLM</button>
+            <button class="filter-btn" data-filter="critical">⚠️ Overdue</button>
+        </div>
+
+        <div class="dashboard">
+            <div class="table-wrapper">
+                <table id="subscriptionTable">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Category</th>
+                            <th>Renewal Date</th>
+                            <th>Days Left</th>
+                            <th>Status</th>
+                            <th>Cost</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <tr class="empty-state">
+                            <td colspan="7">
+                                <div class="empty-state-icon">📭</div>
+                                <p>No subscriptions added yet. Click "Add New" to get started!</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Add New Subscription</h2>
+                <button class="close-btn" id="closeModal">&times;</button>
+            </div>
+            <form id="subscriptionForm">
+                <div class="form-group">
+                    <label for="name">Name *</label>
+                    <input type="text" id="name" placeholder="e.g., Netflix" required>
+                </div>
+                <div class="form-group">
+                    <label for="category">Category *</label>
+                    <select id="category" required>
+                        <option value="">Select Category</option>
+                        <optgroup label="OTT Platforms">
+                            <option value="OTT">Netflix</option>
+                            <option value="OTT">Prime Video</option>
+                            <option value="OTT">Disney+</option>
+                            <option value="OTT">Jio Savn</option>
+                            <option value="OTT">Hotstar</option>
+                            <option value="OTT">Sony Liv</option>
+                            <option value="OTT">ZEE5</option>
+                            <option value="OTT">Voot</option>
+                            <option value="OTT">Other OTT</option>
+                        </optgroup>
+                        <optgroup label="Utilities">
+                            <option value="Utility">Electricity Bill</option>
+                            <option value="Utility">Water Bill</option>
+                            <option value="Utility">Internet/Broadband</option>
+                            <option value="Utility">Mobile Postpaid</option>
+                            <option value="Utility">Gas Bill</option>
+                            <option value="Utility">Other Utility</option>
+                        </optgroup>
+                        <optgroup label="AI/LLM">
+                            <option value="LLM">Claude Pro</option>
+                            <option value="LLM">ChatGPT Plus</option>
+                            <option value="LLM">Other LLM</option>
+                        </optgroup>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="renewalDate">Renewal Date *</label>
+                    <input type="date" id="renewalDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="cost">Monthly Cost (₹)</label>
+                    <input type="number" id="cost" step="0.01" min="0" placeholder="0.00">
+                </div>
+                <div class="form-group">
+                    <label for="reminderDays">Reminder Days Before</label>
+                    <input type="number" id="reminderDays" value="3" min="0" max="30">
+                </div>
+                <div class="form-group">
+                    <label for="notes">Notes</label>
+                    <textarea id="notes" placeholder="Add any notes..." rows="3"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="primary" id="submitBtn">Add Subscription</button>
+                    <button type="button" id="cancelBtn">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '/api';
+        let currentEditId = null;
+        let currentFilter = 'all';
+
+        // API Calls
+        async function fetchSubscriptions(filter = 'all') {
+            try {
+                const url = filter === 'all' ? `${API_BASE}/subscriptions` : `${API_BASE}/subscriptions?filter=${filter}`;
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Failed to fetch');
+                return await response.json();
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('Error loading subscriptions', 'error');
+                return [];
+            }
+        }
+
+        async function fetchStats() {
+            try {
+                const response = await fetch(`${API_BASE}/stats`);
+                if (!response.ok) throw new Error('Failed to fetch');
+                return await response.json();
+            } catch (error) {
+                console.error('Error:', error);
+                return null;
+            }
+        }
+
+        async function createSubscription(data) {
+            try {
+                const response = await fetch(`${API_BASE}/subscriptions`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                if (!response.ok) throw new Error('Failed to create');
+                return await response.json();
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('Error adding subscription', 'error');
+                return null;
+            }
+        }
+
+        async function updateSubscription(id, data) {
+            try {
+                const response = await fetch(`${API_BASE}/subscriptions/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                if (!response.ok) throw new Error('Failed to update');
+                return await response.json();
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('Error updating subscription', 'error');
+                return null;
+            }
+        }
+
+        async function deleteSubscription(id) {
+            if (!confirm('Are you sure?')) return;
+            try {
+                const response = await fetch(`${API_BASE}/subscriptions/${id}`, {
+                    method: 'DELETE'
+                });
+                if (!response.ok) throw new Error('Failed to delete');
+                showAlert('Subscription deleted', 'success');
+                await loadData();
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('Error deleting subscription', 'error');
+            }
+        }
+
+        async function exportData() {
+            try {
+                const response = await fetch(`${API_BASE}/export`);
+                if (!response.ok) throw new Error('Failed to export');
+                const data = await response.json();
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `subscriptions-${new Date().toISOString().split('T')[0]}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+                showAlert('Data exported', 'success');
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('Error exporting data', 'error');
+            }
+        }
+
+        // UI Functions
+        function showAlert(message, type = 'success') {
+            const alert = document.getElementById('alert');
+            alert.textContent = message;
+            alert.className = `alert show ${type}`;
+            setTimeout(() => alert.classList.remove('show'), 3000);
+        }
+
+        function openModal(id = null) {
+            currentEditId = id;
+            const form = document.getElementById('subscriptionForm');
+            form.reset();
+            document.getElementById('modalTitle').textContent = id ? 'Edit Subscription' : 'Add New Subscription';
+            document.getElementById('submitBtn').textContent = id ? 'Update' : 'Add Subscription';
+            document.getElementById('modal').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.remove('show');
+            currentEditId = null;
+        }
+
+        async function renderTable() {
+            const subs = await fetchSubscriptions(currentFilter);
+            const tbody = document.getElementById('tableBody');
+
+            if (subs.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">📭</div>
+                                <p>No subscriptions found</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = subs.map(sub => `
+                <tr>
+                    <td><strong>${sub.name}</strong></td>
+                    <td><span class="category-badge">${sub.category}</span></td>
+                    <td>${new Date(sub.renewal_date).toLocaleDateString('en-IN')}</td>
+                    <td>${sub.days_left}</td>
+                    <td><span class="status-badge status-${sub.status}">${sub.days_left < 0 ? Math.abs(sub.days_left) + 'd Overdue' : sub.days_left + 'd Left'}</span></td>
+                    <td>₹${sub.cost.toFixed(2)}</td>
+                    <td>
+                        <div class="actions">
+                            <button class="btn-sm" onclick="openModal(${sub.id})">Edit</button>
+                            <button class="btn-sm" onclick="deleteSubscription(${sub.id})">Delete</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function updateStats() {
+            const stats = await fetchStats();
+            if (stats) {
+                document.getElementById('totalSubscriptions').textContent = stats.total_subscriptions;
+                document.getElementById('dueSoon').textContent = stats.due_soon;
+                document.getElementById('monthlySpend').textContent = `₹${stats.monthly_spend}`;
+                document.getElementById('overdueCount').textContent = stats.overdue;
+            }
+        }
+
+        async function loadData() {
+            await renderTable();
+            await updateStats();
+        }
+
+        // Event Listeners
+        document.getElementById('addBtn').addEventListener('click', () => openModal());
+        document.getElementById('closeModal').addEventListener('click', closeModal);
+        document.getElementById('cancelBtn').addEventListener('click', closeModal);
+        document.getElementById('exportBtn').addEventListener('click', exportData);
+
+        document.getElementById('subscriptionForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const data = {
+                name: document.getElementById('name').value,
+                category: document.getElementById('category').value,
+                renewal_date: document.getElementById('renewalDate').value,
+                cost: parseFloat(document.getElementById('cost').value) || 0,
+                reminder_days: parseInt(document.getElementById('reminderDays').value) || 3,
+                notes: document.getElementById('notes').value
+            };
+
+            if (currentEditId) {
+                const result = await updateSubscription(currentEditId, data);
+                if (result?.success) showAlert('Updated', 'success');
+            } else {
+                const result = await createSubscription(data);
+                if (result?.success) showAlert('Added', 'success');
+            }
+
+            closeModal();
+            await loadData();
+        });
+
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                currentFilter = e.target.dataset.filter;
+                renderTable();
+            });
+        });
+
+        document.getElementById('modal').addEventListener('click', (e) => {
+            if (e.target.id === 'modal') closeModal();
+        });
+
+        // Initial load
+        loadData();
+        setInterval(loadData, 30000); // Refresh every 30 seconds
+    </script>
+</body>
+</html>
