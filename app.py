@@ -318,6 +318,13 @@ def get_people():
     """Get list of all family members"""
     people = db.session.query(Subscription.person_name).distinct().all()
     return jsonify([p[0] for p in people if p[0]])
+
+@app.route('/static/logos/<path:filename>')
+def serve_logo(filename):
+    """Serve brand logo SVG assets"""
+    from flask import send_from_directory
+    return send_from_directory(os.path.join(os.path.dirname(__file__), 'static', 'logos'), filename)
+
 def not_found(error):
     return jsonify({'error': 'Not found'}), 404
 
