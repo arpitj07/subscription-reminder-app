@@ -32,6 +32,7 @@ class Subscription(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     category = db.Column(db.String(50), nullable=False)
+    brand = db.Column(db.String(100), nullable=True)  # Brand picked from dropdown, used for logo lookup
     person_name = db.Column(db.String(100), default='Self')  # Family member name
     start_date = db.Column(db.Date)  # Optional start date
     renewal_date = db.Column(db.Date, nullable=False)
@@ -62,6 +63,7 @@ class Subscription(db.Model):
             'id': self.id,
             'name': self.name,
             'category': self.category,
+            'brand': self.brand,
             'start_date': self.start_date.isoformat() if self.start_date else None,
             'renewal_date': self.renewal_date.isoformat(),
             'cost': self.cost,
@@ -82,6 +84,18 @@ class Subscription(db.Model):
 # Create tables on startup
 with app.app_context():
     db.create_all()
+
+    # Lightweight auto-migration: add any model columns missing from an older database
+    from sqlalchemy import inspect, text
+    inspector = inspect(db.engine)
+    existing_columns = {col['name'] for col in inspector.get_columns('subscription')}
+    missing_columns = [c for c in Subscription.__table__.columns if c.name not in existing_columns]
+    if missing_columns:
+        with db.engine.connect() as conn:
+            for column in missing_columns:
+                col_type = column.type.compile(dialect=db.engine.dialect)
+                conn.execute(text(f'ALTER TABLE subscription ADD COLUMN {column.name} {col_type}'))
+            conn.commit()
 
 # ==================== API Routes ====================
 
@@ -138,6 +152,7 @@ def create_subscription():
         subscription = Subscription(
             name=data['name'],
             category=data['category'],
+            brand=data.get('brand'),
             start_date=start_date,
             renewal_date=datetime.fromisoformat(data['renewal_date']).date(),
             cost=data.get('cost', 0),
@@ -183,6 +198,8 @@ def update_subscription(id):
             subscription.name = data['name']
         if 'category' in data:
             subscription.category = data['category']
+        if 'brand' in data:
+            subscription.brand = data['brand']
         if 'start_date' in data:
             subscription.start_date = datetime.fromisoformat(data['start_date']).date() if data['start_date'] else None
         if 'renewal_date' in data:
@@ -294,6 +311,7 @@ def import_data():
             subscription = Subscription(
                 name=item['name'],
                 category=item['category'],
+                brand=item.get('brand'),
                 start_date=start_date,
                 renewal_date=datetime.fromisoformat(item['renewal_date']).date(),
                 cost=item.get('cost', 0),

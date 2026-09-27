@@ -840,6 +840,7 @@
                 </div>
                 <div class="form-group">
                     <label class="form-label"><i class="fas fa-folder"></i> Category</label>
+                    <input type="hidden" id="brand">
                     <select id="category" class="form-input" required>
                         <option value="">Select Category</option>
                         <optgroup label="📺 Entertainment">
@@ -1131,6 +1132,7 @@
                 document.getElementById('submitBtn').innerHTML = '<i class="fas fa-check"></i>Update';
                 document.getElementById('name').value = sub.name || '';
                 document.getElementById('category').value = sub.category || '';
+                document.getElementById('brand').value = sub.brand || '';
                 document.getElementById('startDate').value = (sub.start_date || '').split('T')[0];
                 document.getElementById('renewalDate').value = (sub.renewal_date || '').split('T')[0];
                 document.getElementById('subscriptionType').value = sub.subscription_type || 'Monthly';
@@ -1229,10 +1231,13 @@
             return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
         }
 
-        function renderLogoHtml(name) {
-            // Use exact file name matching (don't URL-encode spaces/symbols that files use)
-            const fileName = name.trim() + '.svg';
-            return `<img src="/static/logos/${fileName}" alt="${name}" onerror="this.style.display='none';this.parentElement.innerHTML='<div style=\\'width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#6366f1,#8b5cf6);font-size:32px;border-radius:inherit;\\'>📦</div>';" style="width:100%;height:100%;object-fit:contain;" />`;
+        function renderLogoHtml(sub) {
+            // Prefer the brand picked from the category dropdown (reliable) over the
+            // free-typed name (which users can misspell), falling back to name for
+            // older records saved before brand tracking existed.
+            const logoKey = (sub.brand || sub.name || '').trim();
+            const fileName = logoKey + '.svg';
+            return `<img src="/static/logos/${fileName}" alt="${sub.name}" onerror="this.style.display='none';this.parentElement.innerHTML='<div style=\\'width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#6366f1,#8b5cf6);font-size:32px;border-radius:inherit;\\'>📦</div>';" style="width:100%;height:100%;object-fit:contain;" />`;
         }
 
         async function renderSubscriptions() {
@@ -1281,7 +1286,7 @@
                 return `
                     <div class="subscription-card">
                         <div class="card-top">
-                            <div class="card-logo">${renderLogoHtml(sub.name)}</div>
+                            <div class="card-logo">${renderLogoHtml(sub)}</div>
                             <div class="card-info">
                                 <div class="card-name">${sub.name}</div>
                                 ${sub.person_name ? `<span class="card-badge payment-type"><i class="fas fa-user"></i> ${sub.person_name}</span>` : ''}
@@ -1351,6 +1356,11 @@
             renderSubscriptions();
         });
 
+        document.getElementById('category').addEventListener('change', (e) => {
+            const selected = e.target.options[e.target.selectedIndex];
+            document.getElementById('brand').value = selected.value ? selected.textContent : '';
+        });
+
         document.getElementById('subscriptionType').addEventListener('change', (e) => {
             document.getElementById('customPeriodGroup').style.display = e.target.value === 'Custom' ? 'block' : 'none';
         });
@@ -1395,6 +1405,7 @@
             const data = {
                 name: document.getElementById('name').value,
                 category: document.getElementById('category').value,
+                brand: document.getElementById('brand').value || null,
                 start_date: document.getElementById('startDate').value || null,
                 renewal_date: document.getElementById('renewalDate').value,
                 subscription_type: document.getElementById('subscriptionType').value,
