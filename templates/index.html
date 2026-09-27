@@ -1230,9 +1230,9 @@
         }
 
         function renderLogoHtml(name) {
-            const safe = name.replace(/[^a-zA-Z0-9\s\/&+]/g, '').trim();
-            const encoded = encodeURIComponent(safe);
-            return `<img src="/static/logos/${encoded}.svg" alt="${name}" onerror="this.style.display='none';this.parentElement.innerHTML='<div style=\\'width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#6366f1,#8b5cf6);font-size:32px;border-radius:inherit;\\'>📦</div>';" style="width:100%;height:100%;object-fit:contain;" />`;
+            // Use exact file name matching (don't URL-encode spaces/symbols that files use)
+            const fileName = name.trim() + '.svg';
+            return `<img src="/static/logos/${fileName}" alt="${name}" onerror="this.style.display='none';this.parentElement.innerHTML='<div style=\\'width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#6366f1,#8b5cf6);font-size:32px;border-radius:inherit;\\'>📦</div>';" style="width:100%;height:100%;object-fit:contain;" />`;
         }
 
         async function renderSubscriptions() {
